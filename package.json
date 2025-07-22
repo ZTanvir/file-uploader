@@ -1,0 +1,35 @@
+{
+  "name": "file-uploader",
+  "version": "1.0.0",
+  "description": "upload your files and share them with your friends.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZTanvir/file-uploader.git"
+  },
+  "keywords": [
+    "nodejs",
+    "ejs",
+    "express",
+    "prisma"
+  ],
+  "author": "zahirul",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ZTanvir/file-uploader/issues"
+  },
+  "homepage": "https://github.com/ZTanvir/file-uploader#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "passport": "^0.7.0",
+    "passport-local": "^1.0.0"
+  }
+}
