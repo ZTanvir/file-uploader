@@ -40,10 +40,42 @@ html {
   background-color: var(--color-ebony-clay);
   padding: 1rem;
   color: var(--color-white);
+  font-size: 14px;
 }
-.footer * {
-  border: 1px solid red;
+.footer .footer_left-side {
+  flex-grow: 1;
 }
+
+.footer a {
+  color: var(--color-white);
+  text-decoration: none;
+  height: 100%;
+}
+.footer .github-user {
+  font-weight: 800;
+}
+.footer .project-descriptions {
+  font-weight: 200;
+  font-size: 12px;
+}
+
+.footer .project-code {
+  color: var(--color-azul);
+  font-size: 18px;
+  display: block;
+}
+
+.footer_right-side {
+  align-self: center;
+}
+
+[data-stack] {
+  --gutter: initial;
+  display: flex;
+  flex-direction: column;
+  gap: var(--gutter, 0px);
+}
+
 [data-inline] {
   --gutter: initial;
   display: flex;
