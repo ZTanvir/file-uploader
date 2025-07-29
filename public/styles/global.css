@@ -14,6 +14,10 @@ html {
   color: var(--color-white);
   padding: 1rem;
 }
+.navbar-icon,
+#navbar-icon {
+  display: none;
+}
 .navbar > ul {
   padding: 0;
 }
@@ -127,9 +131,22 @@ html {
   .navbar ul {
     flex-wrap: nowrap;
     flex-direction: column;
-    align-items: center;
   }
   .navbar > ul > .home-logo {
     margin-right: 0;
+  }
+  .navbar-icon {
+    display: inline;
+  }
+  .navbar > ul {
+    display: none;
+  }
+
+  #navbar-icon:checked + ul {
+    display: flex;
+  }
+
+  .navbar-icon > span {
+    font-size: 3rem;
   }
 }
