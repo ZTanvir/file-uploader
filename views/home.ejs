@@ -3,51 +3,57 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-      rel="stylesheet"
-    />
     <link
       href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
       rel="stylesheet"
     />
-
     <link rel="stylesheet" href="../public/styles/reset.css" />
     <link rel="stylesheet" href="../public/styles/global.css" />
+    <link rel="stylesheet" href="../public/styles/pages/home.css" />
 
     <title>File Storage</title>
   </head>
-  <body>
+  <body id="home-page">
     <header><%- include("partials/navbar") %></header>
-    <main>
-      <section>
-        <h1>Welcome to File Storage</h1>
-        <p>
+    <main data-stack style="--gutter: 2rem">
+      <section data-center="center-child center-text" style="--gutter: 1rem">
+        <h1 class="page-title">Welcome to File Storage</h1>
+        <p class="page-descriptions">
           Your secure, reliable, and easy-to-use online file storage solution.
           Start organizing and accessing your files from anywhere in the world.
         </p>
-        <button>Get started</button>
+        <button class="get-started-btn">Get started</button>
       </section>
-      <div>
-        <section>
-          <h3>Secure</h3>
-          <p>
+      <div data-grid style="--gutter: 1rem" class="features">
+        <section
+          style="--gutter: 1rem"
+          class="feature-card"
+          data-center="center-child center-text"
+        >
+          <h3 class="card-title">Secure</h3>
+          <p class="card-descriptions">
             Robust encryption to keep your files safe and secure from
             unauthorized access.
           </p>
         </section>
-        <section>
-          <h3>Ready Access</h3>
-          <p>
+        <section
+          style="--gutter: 1rem"
+          class="feature-card"
+          data-center="center-child center-text"
+        >
+          <h3 class="card-title">Ready Access</h3>
+          <p class="card-descriptions">
             Sync your files in the cloud, ensuring access to your latest version
             across any device.
           </p>
         </section>
-        <section>
-          <h3>Easy-to-Use</h3>
-          <p>
+        <section
+          style="--gutter: 1rem"
+          class="feature-card"
+          data-center="center-child center-text"
+        >
+          <h3 class="card-title">Easy-to-Use</h3>
+          <p class="card-descriptions">
             Robust encryption to keep your files safe and secure from
             unauthorized access.
           </p>

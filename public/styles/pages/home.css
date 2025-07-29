@@ -1,0 +1,42 @@
+#home-page {
+  height: 100vh;
+  background-color: var(--color-white-smoke);
+  display: flex;
+  flex-direction: column;
+}
+#home-page .page-title {
+  margin-top: 2rem;
+  font-size: 3rem;
+}
+#home-page main {
+  padding: 1rem;
+}
+
+#home-page .feature-card {
+  background-color: var(--color-white);
+  border-radius: 1rem;
+  padding: 1.5rem;
+}
+#home-page .card-title {
+  font-size: 28px;
+}
+#home-page .get-started-btn {
+  padding: 0.75rem 1.5rem;
+  font-size: 1.25rem;
+  background-color: var(--color-azul);
+  color: var(--color-white);
+  border-radius: 8px;
+  border: none;
+}
+
+#home-page .get-started-btn:hover {
+  cursor: pointer;
+  background-color: var(--color-azul-dark);
+}
+
+#home-page footer {
+  margin-top: auto;
+}
+
+@media screen and (max-width: 500px) {
+}
