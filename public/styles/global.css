@@ -5,6 +5,7 @@ html {
   --color-ebony-clay: #1f2937;
   --color-white: white;
   --color-white-smoke: #f3f4f6;
+  --color-quill-gray: #d1d5db;
   --font-roboto: "Roboto";
   font-family: var(--font-roboto, sans-serif);
 }
@@ -91,6 +92,14 @@ html {
   flex-wrap: wrap;
   gap: var(--gutter, 0px);
 }
+[data-inline~="space-between"] {
+  --gutter: initial;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--gutter, 0px);
+}
+
 [data-cover] {
   --gutter: initial;
   --minHeight: initial;

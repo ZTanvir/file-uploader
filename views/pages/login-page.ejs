@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../../public/styles/reset.css" />
+    <link rel="stylesheet" href="../../public/styles/global.css" />
+    <link rel="stylesheet" href="../../public/styles/pages/login-page.css" />
+    <title>File Storage</title>
+  </head>
+  <body id="login-page">
+    <header><%- include("../partials/navbar") %></header>
+    <main data-center="center-child">
+      <form
+        data-stack
+        style="--gutter: 1rem"
+        action=""
+        method="post"
+        id="login-form"
+      >
+        <h1 data-center="center-text" class="form-title">Login</h1>
+        <div data-stack style="--gutter: 0.25rem">
+          <label for="username">Username:</label>
+          <input type="text" name="username" id="username" />
+        </div>
+        <div data-stack style="--gutter: 0.25rem">
+          <label for="password">Password:</label>
+          <input type="password" name="password" id="password" />
+        </div>
+        <button class="loginBtn">Login</button>
+        <div data-inline="space-between" style="--gutter: 0.25rem">
+          <a href="#">Help</a>
+          <span
+            >Don't have an account? <a href="/sign-up">Sign up here</a></span
+          >
+        </div>
+      </form>
+    </main>
+    <%- include("../partials/footer") %>
+  </body>
+</html>

@@ -1,5 +1,6 @@
 const express = require("express");
 const path = require("path");
+const loginRoute = require("./routes/login");
 
 const app = express();
 app.set("view engine", "ejs");
@@ -10,5 +11,6 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 app.get("/", (req, res) => {
   res.render("home");
 });
+app.use("/", loginRoute);
 
 module.exports = app;
