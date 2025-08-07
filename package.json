@@ -24,11 +24,14 @@
   },
   "homepage": "https://github.com/ZTanvir/file-uploader#readme",
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.10",
+    "prisma": "^6.13.0"
   },
   "dependencies": {
+    "@prisma/client": "^6.13.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
+    "express-validator": "^7.2.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0"
   }
