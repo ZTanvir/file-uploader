@@ -18,18 +18,34 @@
       <form
         data-stack
         style="--gutter: 1rem"
-        action=""
+        action="/log-in"
         method="post"
         id="login-form"
       >
         <h1 data-center="center-text" class="form-title">Login</h1>
         <div data-stack style="--gutter: 0.25rem">
           <label for="username">Username:</label>
-          <input type="text" name="username" id="username" />
+          <input
+            type="text"
+            name="username"
+            id="username"
+            value="<%= formData['username'] %>"
+          />
+          <% errors.forEach(error => { if(error.path === 'username') {%>
+          <span class="error-msg"><%=error.msg %></span>
+          <% }}) %>
         </div>
         <div data-stack style="--gutter: 0.25rem">
           <label for="password">Password:</label>
-          <input type="password" name="password" id="password" />
+          <input
+            type="password"
+            name="password"
+            id="password"
+            value="<%= formData['password'] %>"
+          />
+          <% errors.forEach(error => { if(error.path === 'password') {%>
+          <span class="error-msg"><%=error.msg %></span>
+          <% }}) %>
         </div>
         <button class="loginBtn">Login</button>
         <div data-inline="space-between" style="--gutter: 0.25rem">
