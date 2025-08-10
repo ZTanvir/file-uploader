@@ -2,6 +2,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
+  --color-red: red;
 }
 #signup-page main {
   flex-grow: 1;
@@ -26,6 +27,9 @@
 #signup-page .signupBtn:hover {
   cursor: pointer;
   background-color: var(--color-azul-dark);
+}
+#signup-page .error-msg {
+  color: var(--color-red);
 }
 
 /* Extra small devices (phones, 600px and down) */

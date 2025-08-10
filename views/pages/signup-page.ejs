@@ -25,15 +25,39 @@
         <h1 data-center="center-text" class="form-title">Sign Up</h1>
         <div data-stack style="--gutter: 0.25rem">
           <label for="username">Username:</label>
-          <input type="text" name="username" id="username" />
+          <input
+            type="text"
+            name="username"
+            id="username"
+            value="<%= formData['username'] %>"
+          />
+          <% errors.forEach(error => { if(error.path === 'username') {%>
+          <span class="error-msg"><%=error.msg %></span>
+          <% }}) %>
         </div>
         <div data-stack style="--gutter: 0.25rem">
           <label for="password">Password:</label>
-          <input type="password" name="password" id="password" />
+          <input
+            type="password"
+            name="password"
+            id="password"
+            value="<%= formData['password'] %>"
+          />
+          <% errors.forEach(error => { if(error.path === 'password') {%>
+          <span class="error-msg"><%=error.msg %></span>
+          <% }}) %>
         </div>
         <div data-stack style="--gutter: 0.25rem">
           <label for="confirm-password">Confirm Password:</label>
-          <input type="password" name="confirmPassword" id="confirm-password" />
+          <input
+            type="password"
+            name="confirmPassword"
+            id="confirm-password"
+            value="<%= formData['confirmPassword'] %>"
+          />
+          <% errors.forEach(error => { if(error.path === 'confirmPassword') {%>
+          <span class="error-msg"><%=error.msg %></span>
+          <% }}) %>
         </div>
         <button class="signupBtn">Sign up</button>
         <div data-inline="space-between" style="--gutter: 0.25rem">
