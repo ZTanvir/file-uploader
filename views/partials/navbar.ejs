@@ -21,9 +21,18 @@
     </li>
     <% }else{ %>
     <!-- user logged in -->
-    <li><%= locals.currentUser.username %></li>
+    <li class="username">
+      <span class="material-symbols-outlined"> person </span>Hi @<span
+        class="name"
+        ><%= locals.currentUser.username %></span
+      >
+    </li>
     <li>
-      <form action="/log-out"><button class="logoutBtn">Log out</button></form>
+      <form action="/log-out">
+        <div class="logoutBtn">
+          Log out <span class="material-symbols-outlined"> logout </span>
+        </div>
+      </form>
     </li>
     <% } %>
   </ul>
