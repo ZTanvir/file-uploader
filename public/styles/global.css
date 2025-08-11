@@ -79,6 +79,13 @@ html {
 .material-symbols-outlined {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
+.logoutBtn {
+  border-radius: 8px;
+  border: none;
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+
 [data-stack] {
   --gutter: initial;
   display: flex;
@@ -90,6 +97,7 @@ html {
   --gutter: initial;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--gutter, 0px);
 }
 [data-inline~="space-between"] {

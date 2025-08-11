@@ -3,6 +3,7 @@ const path = require("path");
 const loginRoute = require("./routes/login");
 const signupRoute = require("./routes/signup");
 const expressSession = require("express-session");
+const passport = require("./config/passport");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const { PrismaClient } = require("@prisma/client");
 require("dotenv").config();
@@ -31,6 +32,12 @@ app.use(
     }),
   })
 );
+app.use(passport.session());
+// store user so it can use in views
+app.use((req, res, next) => {
+  res.locals.currentUser = req.user;
+  next();
+});
 
 app.get("/", (req, res) => {
   res.render("home");

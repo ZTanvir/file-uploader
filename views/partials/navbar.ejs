@@ -5,8 +5,10 @@
   <input type="checkbox" name="navbar-mobile" id="navbar-icon" />
   <ul data-inline style="--gutter: 1rem">
     <li class="home-logo">
-      <a href=""> File<span class="home-logo__text">Storage</span></a>
+      <a href="/"> File<span class="home-logo__text">Storage</span></a>
     </li>
+    <% if(!locals.currentUser ) {%>
+    <!-- no user logged in -->
     <li>
       <a href="/log-in"
         ><span class="material-symbols-outlined"> login</span>Log in</a
@@ -17,5 +19,12 @@
         ><span class="material-symbols-outlined"> person_add </span>Sign up</a
       >
     </li>
+    <% }else{ %>
+    <!-- user logged in -->
+    <li><%= locals.currentUser.username %></li>
+    <li>
+      <form action="/log-out"><button class="logoutBtn">Log out</button></form>
+    </li>
+    <% } %>
   </ul>
 </nav>
