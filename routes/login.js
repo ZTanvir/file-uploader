@@ -1,11 +1,40 @@
 const express = require("express");
 const loginRoute = express.Router();
 const passport = require("passport");
+const prisma = require("../utils/prismaClient");
+const bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
 
 const signinValidationResult = [
-  body("username").notEmpty().withMessage("Please enter your username."),
-  body("password").notEmpty().withMessage("Please enter your password."),
+  body("username")
+    .notEmpty()
+    .withMessage("Please enter your username.")
+    .custom(async (value) => {
+      const user = await prisma.user.findFirst({
+        where: {
+          username: value,
+        },
+      });
+      if (!user) {
+        throw new Error("Incorrect username.");
+      }
+    }),
+  body("password")
+    .notEmpty()
+    .withMessage("Please enter your password.")
+    .custom(async (value, { req }) => {
+      const user = await prisma.user.findFirst({
+        where: {
+          username: req.body.username,
+        },
+      });
+      if (user) {
+        const match = await bcrypt.compare(value, user.password);
+        if (!match) {
+          throw new Error("Incorrect password.");
+        }
+      }
+    }),
 ];
 
 loginRoute.get("/log-in", (req, res) => {
@@ -18,11 +47,7 @@ loginRoute.get("/log-in", (req, res) => {
 loginRoute.post(
   "/log-in",
   signinValidationResult,
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/log-in",
-  }),
-  async (req, res) => {
+  async (req, res, next) => {
     const username = req.body.username;
     const password = req.body.password;
     // validate username,password,confirm password
@@ -33,7 +58,12 @@ loginRoute.post(
         formData: { username, password },
       });
     }
-  }
+    next();
+  },
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/log-in",
+  })
 );
 
 loginRoute.get("/log-out", (req, res, next) => {
