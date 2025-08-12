@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const loginRoute = require("./routes/login");
 const signupRoute = require("./routes/signup");
+const libraryRoute = require("./routes/library");
 const expressSession = require("express-session");
 const passport = require("./config/passport");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
@@ -44,5 +45,6 @@ app.get("/", (req, res) => {
 });
 app.use("/", loginRoute);
 app.use("/", signupRoute);
+app.use("/", libraryRoute);
 
 module.exports = app;

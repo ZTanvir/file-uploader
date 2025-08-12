@@ -2,6 +2,7 @@
 html {
   --color-azul: #2563eb;
   --color-azul-dark: #286cff;
+  --color-light-blue: rgb(59, 130, 246);
   --color-ebony-clay: #1f2937;
   --color-white: white;
   --color-white-smoke: #f3f4f6;
@@ -80,7 +81,8 @@ html {
   font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
 }
 .username,
-.logoutBtn {
+.logoutBtn,
+.library {
   display: flex;
 }
 .username .name {
