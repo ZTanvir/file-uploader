@@ -31,7 +31,6 @@
       <dialog class="file-upload-modal">
         <form
           id="upload-file-form"
-          action="/upload"
           method="post"
           enctype="multipart/form-data"
           data-stack
@@ -39,12 +38,14 @@
         >
           <div data-inline="space-between">
             <p class="title">Upload to my library</p>
-            <button class="close-modal-btn" formmethod="dialog" type="submit">
+            <button type="reset" class="close-modal-btn">
               <span class="close-modal-icon">&#10005;</span>
             </button>
           </div>
+          <p class="msg"></p>
           <input id="upload_file" type="file" name="upload_file" />
-          <button class="submit-btn" type="submit">Submit</button>
+          <p class="file-max-size">(Max: 10MB)</p>
+          <button class="submit-btn" type="submit">Upload File</button>
         </form>
       </dialog>
     </main>
@@ -52,9 +53,71 @@
   </body>
   <script>
     const dialog = document.querySelector(".file-upload-modal");
+    const closeDialog = document.querySelector(".close-modal-btn");
+    const inputFileEl = document.querySelector("#upload_file");
     const modalTriggerBtn = document.querySelector(".upload-file");
+    const uploadFileFromEl = document.querySelector("#upload-file-form");
+    const msgEl = document.querySelector(".msg");
+
+    closeDialog.addEventListener("click", (e) => {
+      const isFailed = msgEl.classList.contains("failed");
+      if (isFailed) {
+        msgEl.classList.remove("failed");
+      } else {
+        msgEl.classList.remove("success");
+      }
+      msgEl.style.display = "none";
+      dialog.close();
+    });
+
     modalTriggerBtn.addEventListener("click", (e) => {
       dialog.showModal();
+    });
+
+    uploadFileFromEl.addEventListener("submit", (e) => {
+      e.preventDefault();
+      async function uploadFile() {
+        try {
+          const file = document.querySelector("#upload_file").files[0];
+          const formData = new FormData();
+          formData.append("upload_file", file);
+          const response = await fetch("/upload", {
+            method: "POST",
+            body: formData,
+          });
+          const data = await response.json();
+          msgEl.style.display = "block";
+          if (!response.ok) {
+            msgEl.classList.add("failed");
+            if (msgEl.classList.contains("success")) {
+              msgEl.classList.remove("success");
+            }
+            if (response.status === 500) {
+              // file size extends the limit 10mb
+              // display error msg to user
+              msgEl.textContent =
+                "File size exceeds the 10MB limit. Please choose a smaller file.";
+              return;
+            } else if (response.status === 400) {
+              // file not found
+              // display error msg to user
+              msgEl.textContent = data.error;
+              return;
+            }
+          }
+          // file upload successfully
+          // display success msg to user
+          msgEl.textContent = data.message;
+          msgEl.classList.add("success");
+          if (msgEl.classList.contains("failed")) {
+            msgEl.classList.remove("failed");
+          }
+          uploadFileFromEl.reset();
+        } catch (error) {
+          // console.error(error.message);
+        }
+      }
+      uploadFile();
     });
   </script>
 </html>

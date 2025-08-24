@@ -7,6 +7,8 @@ html {
   --color-white: white;
   --color-white-smoke: #f3f4f6;
   --color-quill-gray: #d1d5db;
+  --color-red: rgb(221, 25, 25);
+  --color-green: green;
   --font-roboto: "Roboto";
   font-family: var(--font-roboto, sans-serif);
 }
@@ -94,7 +96,19 @@ html {
   padding: 0.35rem 0.75rem;
   cursor: pointer;
 }
-
+/* msg */
+.success {
+  color: var(--color-green, green);
+  background-color: rgb(192, 233, 192);
+}
+.failed {
+  color: var(--color-red, rgb(221, 25, 25));
+  background-color: #fef2f2;
+}
+:is(.success, .failed) {
+  padding: 0.25rem;
+  border-radius: 8px;
+}
 [data-stack] {
   --gutter: initial;
   display: flex;

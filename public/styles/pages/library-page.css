@@ -16,6 +16,7 @@
 .file-upload-modal {
   position: fixed;
   inset: 0px;
+  font-weight: 300;
   max-width: 100vw;
   max-height: 100dvh;
   margin: auto;
@@ -32,6 +33,7 @@
   padding: 0;
   cursor: pointer;
   border: none;
+  color: var(--color-red, red);
 }
 .close-modal-btn:hover {
   opacity: 0.5;
