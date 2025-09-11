@@ -28,6 +28,34 @@
           <span>Upload file</span>
         </div>
       </div>
+      <div class="library-body">
+        <table data-center>
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Size</th>
+              <th scope="col">Created</th>
+              <th scope="col">Last Update</th>
+              <th scope="col">Options</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% if(folderList.length){ folderList.forEach(item => { %>
+            <tr>
+              <td><%= item %></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <% })}else{ %>
+            <tr>
+              <td colspan="5">The folder is empty</td>
+            </tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
       <dialog class="file-upload-modal">
         <form
           id="upload-file-form"
@@ -48,6 +76,7 @@
           <button class="submit-btn" type="submit">Upload File</button>
         </form>
       </dialog>
+      <dialog></dialog>
     </main>
     <%- include("../partials/footer") %>
   </body>

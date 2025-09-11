@@ -1,10 +1,13 @@
 const express = require("express");
 const libraryRoute = express.Router();
 const multer = require("multer");
+const fs = require("node:fs");
+const path = require("node:path");
+const prisma = require("../utils/prismaClient");
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/");
+    cb(null, `uploads/`);
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -17,8 +20,18 @@ const upload = multer({
   limits: { fileSize: 10000000 }, // 10 mb file size limit
 }).single("upload_file");
 
-libraryRoute.get("/library", (req, res, next) => {
-  return res.render("pages/library-page");
+libraryRoute.get("/library", async (req, res, next) => {
+  const userId = req.user.id;
+
+  const folderList = await prisma.folder.findMany({
+    where: {
+      userId,
+      parentFolderId: null,
+    },
+  });
+  console.log("Folders", { folderList });
+
+  return res.render("pages/library-page", { folderList });
 });
 
 libraryRoute.post("/upload", (req, res, next) => {

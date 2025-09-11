@@ -68,6 +68,46 @@
   ) {
   text-decoration: underline;
 }
+#library-page table {
+  border-collapse: collapse;
+  border: 2px solid rgb(140 140 140);
+  font-family: sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+#library-page caption {
+  caption-side: bottom;
+  padding: 10px;
+  font-weight: bold;
+}
+
+#library-page thead,
+#library-page tfoot {
+  background-color: rgb(228 240 245);
+}
+
+#library-page th,
+#library-page td {
+  border: 1px solid rgb(160 160 160);
+  padding: 8px 10px;
+}
+
+#library-page td:last-of-type {
+  text-align: center;
+}
+
+#library-page tbody > tr:nth-of-type(even) {
+  background-color: rgb(237 238 242);
+}
+
+#library-page tfoot th {
+  text-align: right;
+}
+
+#library-page tfoot td {
+  font-weight: bold;
+}
 
 /* Extra small devices (phones, 600px and down) */
 @media only screen and (max-width: 600px) {

@@ -63,7 +63,11 @@ loginRoute.post(
   passport.authenticate("local", {
     successRedirect: "/",
     failureRedirect: "/log-in",
-  })
+  }),
+  (req, res, next) => {
+    console.log("User ");
+    
+  }
 );
 
 loginRoute.get("/log-out", (req, res, next) => {

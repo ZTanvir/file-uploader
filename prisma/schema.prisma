@@ -21,7 +21,22 @@ model Session {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
+  id       Int      @id @default(autoincrement())
+  username String   @unique
   password String
+  folder   Folder[]
+}
+
+model Folder {
+  id             Int      @id @default(autoincrement())
+  name           String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  // Relation to User
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id])
+  // Self relation for parent folders
+  parentFolderId Int?     @unique
+  parentFolder   Folder?  @relation("ParentChildren", fields: [parentFolderId], references: [id])
+  childFolder    Folder?  @relation("ParentChildren")
 }
