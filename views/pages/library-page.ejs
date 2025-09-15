@@ -19,10 +19,17 @@
         <div class="my-library">
           <span class="material-symbols-outlined"> folder </span>My Library
         </div>
-        <div class="new-folder">
-          <span class="material-symbols-outlined"> create_new_folder </span
-          ><span>New Folder</span>
-        </div>
+        <!-- Parent folder Id will help by create folder inside the parent location -->
+        <form
+          class="new-folder"
+          action="/library/<%=String(folderData.parentFolderId)%>"
+          method="post"
+        >
+          <button data-inline style="--gutter: 0.5rem" type="submit">
+            <span class="material-symbols-outlined"> create_new_folder </span
+            ><span> New Folder</span>
+          </button>
+        </form>
         <div class="upload-file">
           <span class="material-symbols-outlined"> upload </span>
           <span>Upload file</span>
@@ -40,12 +47,13 @@
             </tr>
           </thead>
           <tbody>
-            <% if(folderList.length){ folderList.forEach(item => { %>
+            <% if(folderData.folderList.length){
+            folderData.folderList.forEach(item => { %>
             <tr>
-              <td><%= item %></td>
+              <td><%= item.name %></td>
               <td></td>
-              <td></td>
-              <td></td>
+              <td><%=`${new Date(item.createdAt).toLocaleString()}` %></td>
+              <td><%=`${new Date(item.updatedAt).toLocaleString()}` %></td>
               <td></td>
             </tr>
             <% })}else{ %>

@@ -29,9 +29,56 @@ libraryRoute.get("/library", async (req, res, next) => {
       parentFolderId: null,
     },
   });
-  console.log("Folders", { folderList });
+  const folderData = { parentFolderId: null, folderList };
+  return res.render("pages/library-page", { folderData });
+});
 
-  return res.render("pages/library-page", { folderList });
+libraryRoute.get("/library/:parentFolder", async (req, res, next) => {
+  const userId = req.user.id;
+  const parentFolderId = Number(req.params.parentFolder);
+
+  const folderList = await prisma.folder.findMany({
+    where: {
+      userId,
+      parentFolderId,
+    },
+  });
+  const folderData = { parentFolderId, folderList };
+
+  return res.render("pages/library-page", { folderData });
+});
+
+libraryRoute.post("/library/:parentFolderId", async (req, res) => {
+  const parentFolderId =
+    req.params.parentFolderId === "null"
+      ? null
+      : Number(req.params.parentFolderId);
+  const userId = req.user.id;
+
+  async function createFolder(parentFolderId, userId) {
+    try {
+      const folder = await prisma.folder.create({
+        data: {
+          name: "new folder",
+          userId,
+          parentFolderId,
+        },
+      });
+      console.log("Folder created ", folder);
+    } catch (error) {
+      console.error("Error on creating new folder", error);
+    }
+  }
+
+  if (!parentFolderId) {
+    createFolder(parentFolderId, userId).then(() => {
+      return res.redirect("/library");
+    });
+  } else {
+    createFolder(parentFolderId, userId).then(() => {
+      return res.redirect(`/library/${parentFolderId}`);
+    });
+  }
 });
 
 libraryRoute.post("/upload", (req, res, next) => {

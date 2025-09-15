@@ -58,7 +58,7 @@
   display: flex;
   gap: 0.5rem;
 }
-:is(#library-page .new-folder, #library-page .upload-file) {
+:is(#library-page .new-folder button, #library-page .upload-file) {
   color: var(--color-light-blue);
   cursor: pointer;
 }
@@ -67,6 +67,11 @@
     #library-page .upload-file span:last-child:hover
   ) {
   text-decoration: underline;
+}
+#library-page .new-folder button {
+  padding: 0;
+  background: transparent;
+  border: none;
 }
 #library-page table {
   border-collapse: collapse;

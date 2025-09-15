@@ -36,7 +36,7 @@ model Folder {
   userId         Int
   user           User     @relation(fields: [userId], references: [id])
   // Self relation for parent folders
-  parentFolderId Int?     @unique
+  parentFolderId Int?
   parentFolder   Folder?  @relation("ParentChildren", fields: [parentFolderId], references: [id])
-  childFolder    Folder?  @relation("ParentChildren")
+  childFolder    Folder[] @relation("ParentChildren")
 }
