@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="../../public/styles/reset.css" />
     <link rel="stylesheet" href="../../public/styles/global.css" />
     <link rel="stylesheet" href="../../public/styles/pages/library-page.css" />
-    <title>Document</title>
+    <title>Library</title>
+    <script defer src="../../public/scripts/library-page.js"></script>
   </head>
   <body id="library-page">
     <header><%- include("../partials/navbar") %></header>
@@ -19,30 +20,57 @@
         <div class="my-library">
           <span class="material-symbols-outlined"> folder </span>My Library
         </div>
-        <!-- Parent folder Id will help by create folder inside the parent location -->
-        <form
-          class="new-folder"
-          action="/library/<%=String(folderData.parentFolderId)%>"
-          method="post"
-        >
-          <button data-inline style="--gutter: 0.5rem" type="submit">
+        <!-- Create folder based on folder name -->
+        <div class="new-folder">
+          <button
+            data-inline
+            style="--gutter: 0.5rem"
+            class="show-new-folder-dialog"
+          >
             <span class="material-symbols-outlined"> create_new_folder </span
             ><span> New Folder</span>
           </button>
-        </form>
+
+          <dialog id="add-folder-dialog">
+            <form
+              data-stack
+              data-parent-folder-id="<%=String(folderData.parentFolderId)%>"
+              style="--gutter: 0.5rem"
+              id="add-folder-dialog__form"
+            >
+              <div>
+                <label for="folder-name">Folder Name:</label>
+                <input
+                  type="text"
+                  id="folder-name"
+                  name="folderName"
+                  required
+                />
+              </div>
+              <div class="button-group">
+                <button type="submit">Submit</button>
+                <button type="button" class="close-add-folder-dialog">
+                  Close
+                </button>
+              </div>
+            </form>
+          </dialog>
+        </div>
+
+        <!-- Trigger upload file modal -->
         <div class="upload-file">
           <span class="material-symbols-outlined"> upload </span>
           <span>Upload file</span>
         </div>
       </div>
       <div class="library-body">
-        <table data-center>
+        <table class="folderInfoTable" data-center>
           <thead>
             <tr>
               <th scope="col">Name</th>
               <th scope="col">Size</th>
-              <th scope="col">Created</th>
-              <th scope="col">Last Update</th>
+              <th class="created-col" scope="col">Created</th>
+              <th class="updated-col" scope="col">Last Update</th>
               <th scope="col">Options</th>
             </tr>
           </thead>
@@ -50,10 +78,16 @@
             <% if(folderData.folderList.length){
             folderData.folderList.forEach(item => { %>
             <tr>
-              <td><%= item.name %></td>
+              <td>
+                <a href="<%=`/library/${item.id}`%>"> <%= item.name %></a>
+              </td>
               <td></td>
-              <td><%=`${new Date(item.createdAt).toLocaleString()}` %></td>
-              <td><%=`${new Date(item.updatedAt).toLocaleString()}` %></td>
+              <td class="created-row">
+                <%=`${new Date(item.createdAt).toLocaleString()}` %>
+              </td>
+              <td class="updated-row">
+                <%=`${new Date(item.updatedAt).toLocaleString()}` %>
+              </td>
               <td></td>
             </tr>
             <% })}else{ %>
@@ -64,6 +98,7 @@
           </tbody>
         </table>
       </div>
+
       <dialog class="file-upload-modal">
         <form
           id="upload-file-form"
@@ -84,77 +119,7 @@
           <button class="submit-btn" type="submit">Upload File</button>
         </form>
       </dialog>
-      <dialog></dialog>
     </main>
     <%- include("../partials/footer") %>
   </body>
-  <script>
-    const dialog = document.querySelector(".file-upload-modal");
-    const closeDialog = document.querySelector(".close-modal-btn");
-    const inputFileEl = document.querySelector("#upload_file");
-    const modalTriggerBtn = document.querySelector(".upload-file");
-    const uploadFileFromEl = document.querySelector("#upload-file-form");
-    const msgEl = document.querySelector(".msg");
-
-    closeDialog.addEventListener("click", (e) => {
-      const isFailed = msgEl.classList.contains("failed");
-      if (isFailed) {
-        msgEl.classList.remove("failed");
-      } else {
-        msgEl.classList.remove("success");
-      }
-      msgEl.style.display = "none";
-      dialog.close();
-    });
-
-    modalTriggerBtn.addEventListener("click", (e) => {
-      dialog.showModal();
-    });
-
-    uploadFileFromEl.addEventListener("submit", (e) => {
-      e.preventDefault();
-      async function uploadFile() {
-        try {
-          const file = document.querySelector("#upload_file").files[0];
-          const formData = new FormData();
-          formData.append("upload_file", file);
-          const response = await fetch("/upload", {
-            method: "POST",
-            body: formData,
-          });
-          const data = await response.json();
-          msgEl.style.display = "block";
-          if (!response.ok) {
-            msgEl.classList.add("failed");
-            if (msgEl.classList.contains("success")) {
-              msgEl.classList.remove("success");
-            }
-            if (response.status === 500) {
-              // file size extends the limit 10mb
-              // display error msg to user
-              msgEl.textContent =
-                "File size exceeds the 10MB limit. Please choose a smaller file.";
-              return;
-            } else if (response.status === 400) {
-              // file not found
-              // display error msg to user
-              msgEl.textContent = data.error;
-              return;
-            }
-          }
-          // file upload successfully
-          // display success msg to user
-          msgEl.textContent = data.message;
-          msgEl.classList.add("success");
-          if (msgEl.classList.contains("failed")) {
-            msgEl.classList.remove("failed");
-          }
-          uploadFileFromEl.reset();
-        } catch (error) {
-          // console.error(error.message);
-        }
-      }
-      uploadFile();
-    });
-  </script>
 </html>

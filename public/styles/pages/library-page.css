@@ -68,6 +68,24 @@
   ) {
   text-decoration: underline;
 }
+#library-page .new-folder {
+  position: relative;
+}
+#library-page .new-folder #add-folder-dialog {
+  position: absolute;
+  border: none;
+  top: 25px;
+  border-radius: 8px;
+}
+
+#library-page .new-folder #add-folder-dialog button {
+  background-color: var(--color-light-blue);
+  cursor: pointer;
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 8px;
+}
+
 #library-page .new-folder button {
   padding: 0;
   background: transparent;
@@ -85,6 +103,15 @@
   caption-side: bottom;
   padding: 10px;
   font-weight: bold;
+}
+
+.folderInfoTable {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+/* Hide updated and created folder info in mobile screen */
+.folderInfoTable :is(.updated-col, .updated-row, .created-col, .created-row) {
+  display: none;
 }
 
 #library-page thead,
@@ -124,6 +151,14 @@
 
 /* Medium devices (landscape tablets, 768px and up) */
 @media only screen and (min-width: 768px) {
+  .folderInfoTable {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+  }
+  /* Hide updated and created folder info in mobile screen */
+  .folderInfoTable :is(.updated-col, .updated-row, .created-col, .created-row) {
+    display: table-cell;
+  }
   #library-page .library-header {
     flex-direction: row;
   }

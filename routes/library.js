@@ -1,8 +1,6 @@
 const express = require("express");
 const libraryRoute = express.Router();
 const multer = require("multer");
-const fs = require("node:fs");
-const path = require("node:path");
 const prisma = require("../utils/prismaClient");
 
 const storage = multer.diskStorage({
@@ -54,29 +52,31 @@ libraryRoute.post("/library/:parentFolderId", async (req, res) => {
       ? null
       : Number(req.params.parentFolderId);
   const userId = req.user.id;
+  const folderName = req.body.folderName;
 
-  async function createFolder(parentFolderId, userId) {
+  async function createFolder(parentFolderId, userId, folderName) {
     try {
       const folder = await prisma.folder.create({
         data: {
-          name: "new folder",
+          name: folderName,
           userId,
           parentFolderId,
         },
       });
-      console.log("Folder created ", folder);
     } catch (error) {
       console.error("Error on creating new folder", error);
     }
   }
 
   if (!parentFolderId) {
-    createFolder(parentFolderId, userId).then(() => {
-      return res.redirect("/library");
+    // parent folder null means root folder
+    createFolder(parentFolderId, userId, folderName).then(() => {
+      return res.status(200).end();
     });
   } else {
-    createFolder(parentFolderId, userId).then(() => {
-      return res.redirect(`/library/${parentFolderId}`);
+    // child folder
+    createFolder(parentFolderId, userId, folderName).then(() => {
+      return res.status(200).end();
     });
   }
 });
