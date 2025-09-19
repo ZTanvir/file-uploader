@@ -88,7 +88,31 @@
               <td class="updated-row">
                 <%=`${new Date(item.updatedAt).toLocaleString()}` %>
               </td>
-              <td></td>
+              <td>
+                <div class="folder-options">
+                  <span
+                    class="material-symbols-outlined open-folder-options-btn"
+                  >
+                    more_vert
+                  </span>
+                  <dialog autofocus="" id="folder-options-dialog">
+                    <div
+                      data-stack
+                      style="--gutter: 0.25rem"
+                      class="folder-options-button-group"
+                    >
+                      <button
+                        type="button"
+                        data-folder-id="<%=String(item.id)%>"
+                        class="delete-folder-btn"
+                      >
+                        <span class="material-symbols-outlined"> delete </span>
+                        Delete
+                      </button>
+                    </div>
+                  </dialog>
+                </div>
+              </td>
             </tr>
             <% })}else{ %>
             <tr>

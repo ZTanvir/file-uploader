@@ -9,6 +9,11 @@ const addFolderNameDialog = document.querySelector("#add-folder-dialog");
 const showButton = document.querySelector(".show-new-folder-dialog");
 const closeButton = document.querySelector(".close-add-folder-dialog");
 const folderModalFrom = document.querySelector("#add-folder-dialog__form");
+// Folder options
+const openFolderOptionsBtn = document.querySelectorAll(
+  ".open-folder-options-btn"
+);
+const deleteFolderOptionsBtns = document.querySelectorAll(".delete-folder-btn");
 
 closeDialog.addEventListener("click", (e) => {
   const isFailed = msgEl.classList.contains("failed");
@@ -86,7 +91,6 @@ folderModalFrom.addEventListener("submit", async function (e) {
   const formData = new FormData(folderModalFrom);
   const requestBody = JSON.stringify(Object.fromEntries(formData));
   const parentFolder = e.target.dataset.parentFolderId;
-  console.log(parentFolder);
 
   try {
     fetch(`/library/${parentFolder}`, {
@@ -104,4 +108,39 @@ folderModalFrom.addEventListener("submit", async function (e) {
     console.error("Network error:", error);
   }
   addFolderNameDialog.close(); // Close the dialog after submission
+});
+
+// Folder dialog
+openFolderOptionsBtn.forEach(function (btn) {
+  btn.addEventListener("click", function (event) {
+    const folderOptionsEl = event.currentTarget.parentNode;
+    const openFolderDialog = folderOptionsEl.querySelector(
+      "#folder-options-dialog"
+    );
+    // close dialog when click outside
+    function handleCloseModalOptions(e) {
+      const dialogDimensions = openFolderDialog.getBoundingClientRect();
+      if (
+        e.clientX < dialogDimensions.left ||
+        e.clientX > dialogDimensions.right ||
+        e.clientY < dialogDimensions.top ||
+        e.clientY > dialogDimensions.bottom
+      ) {
+        openFolderDialog.close();
+        e.currentTarget.removeEventListener("click", handleCloseModalOptions);
+      }
+    }
+    window.addEventListener("click", handleCloseModalOptions);
+    openFolderDialog.show();
+  });
+});
+
+deleteFolderOptionsBtns.forEach(function (deleteBtn) {
+  deleteBtn.addEventListener("click", function (e) {
+    const dataFolderId = e.currentTarget.dataset.folderId;
+    console.log("Delete folder btn", dataFolderId);
+    // fetch(`/library/${dataFolderId}`, { method: "DELETE" }).then(function (
+    //   res
+    // ) {});
+  });
 });

@@ -91,6 +91,33 @@
   background: transparent;
   border: none;
 }
+#library-page .folder-options button {
+  display: flex;
+  gap: 0.5rem;
+  background-color: transparent;
+  border: none;
+  padding: 0.25rem;
+  font-size: 1rem;
+}
+
+#library-page .folder-options button:hover {
+  background-color: rgb(201, 201, 201);
+}
+#library-page .folder-options {
+  position: relative;
+}
+#library-page .folder-options #folder-options-dialog {
+  width: 200px;
+  background-color: white;
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  left: -57px;
+  padding: 8px 0px;
+  border: none;
+  border-radius: 8px;
+}
+
 #library-page table {
   border-collapse: collapse;
   border: 2px solid rgb(140 140 140);
