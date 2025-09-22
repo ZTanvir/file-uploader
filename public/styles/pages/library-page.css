@@ -72,10 +72,12 @@
   position: relative;
 }
 #library-page .new-folder #add-folder-dialog {
+  z-index: 1;
   position: absolute;
   border: none;
   top: 25px;
   border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 #library-page .new-folder #add-folder-dialog button {
@@ -98,6 +100,10 @@
   border: none;
   padding: 0.25rem;
   font-size: 1rem;
+  border-radius: 8px;
+}
+#library-page .folder-options span:hover {
+  cursor: pointer;
 }
 
 #library-page .folder-options button:hover {
@@ -114,9 +120,10 @@
   z-index: 1;
   top: 0;
   left: -57px;
-  padding: 8px 0px;
+  padding: 10px;
   border: none;
   border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 #library-page table {

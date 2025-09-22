@@ -103,6 +103,15 @@
                     >
                       <button
                         type="button"
+                        class="update-folder-btn"
+                        data-folder-id="<%=String(item.id)%>"
+                        data-folder-name="<%=String(item.name)%>"
+                      >
+                        <span class="material-symbols-outlined"> edit </span
+                        >Edit
+                      </button>
+                      <button
+                        type="button"
                         data-folder-id="<%=String(item.id)%>"
                         class="delete-folder-btn"
                       >
@@ -142,6 +151,30 @@
           <p class="file-max-size">(Max: 10MB)</p>
           <button class="submit-btn" type="submit">Upload File</button>
         </form>
+      </dialog>
+
+      <dialog id="folder-rename-modal">
+        <div data-stack style="--gutter: 0.5rem">
+          <div data-inline="space-between">
+            <span>Rename </span>
+            <button class="close-rename-folder-modal-btn">
+              <span class="material-symbols-outlined"> close </span>
+            </button>
+          </div>
+          <hr />
+          <form id="folder-rename-form" data-stack style="--gutter: 0.5rem">
+            <div data-stack style="--gutter: 0.5rem">
+              <label for="updated-folder-name">Name</label>
+              <input
+                type="text"
+                name="updated-folder"
+                id="updated-folder-name"
+                required
+              />
+            </div>
+            <button type="submit">Save</button>
+          </form>
+        </div>
       </dialog>
     </main>
     <%- include("../partials/footer") %>

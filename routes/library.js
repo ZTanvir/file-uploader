@@ -91,13 +91,35 @@ libraryRoute.delete("/library/:parentFolderId", async (req, res) => {
         userId,
       },
     });
-    console.log("Delete folder", deleteFolder);
 
     if (Object.keys(deleteFolder).length > 0) {
       return res.status(200).end();
     }
   } catch (error) {
     console.log("Error on deleting folder", error);
+  }
+});
+
+libraryRoute.patch("/library/:parentFolderId", async (req, res) => {
+  const folderId = Number(req.params.parentFolderId);
+  const userId = Number(req.user.id);
+  const newFolderName = String(req.body.newFolderName);
+  console.log(folderId, userId, newFolderName);
+  try {
+    const updateFolder = await prisma.folder.update({
+      where: {
+        userId,
+        id: folderId,
+      },
+      data: {
+        name: newFolderName,
+      },
+    });
+    if (Object.keys(updateFolder).length > 0) {
+      return res.status(200).end();
+    }
+  } catch (error) {
+    console.error("Error on rename new folder:", error);
   }
 });
 

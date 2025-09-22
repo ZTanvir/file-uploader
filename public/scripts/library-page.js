@@ -10,11 +10,18 @@ const showButton = document.querySelector(".show-new-folder-dialog");
 const closeButton = document.querySelector(".close-add-folder-dialog");
 const folderModalFrom = document.querySelector("#add-folder-dialog__form");
 // Folder options
-const openFolderOptionsBtn = document.querySelectorAll(
+const openFolderOptionsBtns = document.querySelectorAll(
   ".open-folder-options-btn"
 );
+const UpdateFolderOptionsBtns = document.querySelectorAll(".update-folder-btn");
 const deleteFolderOptionsBtns = document.querySelectorAll(".delete-folder-btn");
+// rename folder
+const folderRenameModal = document.querySelector("#folder-rename-modal");
+const folderRenameCloseBtn = document.querySelector(
+  ".close-rename-folder-modal-btn"
+);
 
+// upload dialog
 closeDialog.addEventListener("click", (e) => {
   const isFailed = msgEl.classList.contains("failed");
   if (isFailed) {
@@ -92,26 +99,27 @@ folderModalFrom.addEventListener("submit", async function (e) {
   const requestBody = JSON.stringify(Object.fromEntries(formData));
   const parentFolder = e.target.dataset.parentFolderId;
 
-  try {
-    fetch(`/library/${parentFolder}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: requestBody,
-    }).then((res) => {
+  fetch(`/library/${parentFolder}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: requestBody,
+  })
+    .then((res) => {
       if (res.ok) {
         window.location.reload();
       }
-    });
-  } catch (error) {
-    console.error("Network error:", error);
-  }
+    })
+    .catch((error) =>
+      console.error("Network error on creating new folder:", error)
+    );
+
   addFolderNameDialog.close(); // Close the dialog after submission
 });
 
 // Folder dialog
-openFolderOptionsBtn.forEach(function (btn) {
+openFolderOptionsBtns.forEach(function (btn) {
   btn.addEventListener("click", function (event) {
     const folderOptionsEl = event.currentTarget.parentNode;
     const openFolderDialog = folderOptionsEl.querySelector(
@@ -135,10 +143,46 @@ openFolderOptionsBtn.forEach(function (btn) {
   });
 });
 
+UpdateFolderOptionsBtns.forEach(function (updateBtn) {
+  updateBtn.addEventListener("click", function (e) {
+    const dataFolderId = e.currentTarget.dataset.folderId;
+    const dataFolderName = e.currentTarget.dataset.folderName;
+    const modalFormEl = folderRenameModal.querySelector("#folder-rename-form");
+    const modalFormInputEl = folderRenameModal.querySelector(
+      "#updated-folder-name"
+    );
+    // folder old name
+    modalFormInputEl.value = dataFolderName;
+    function updateFolderName(e) {
+      e.preventDefault();
+      fetch(`/library/${dataFolderId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          newFolderName: modalFormInputEl.value,
+        }),
+      })
+        .then((res) => {
+          if (res.ok) {
+            window.location.reload();
+          }
+        })
+        .catch((error) => console.error(error));
+
+      folderRenameModal.close();
+      modalFormEl.removeEventListener("submit", updateFolderName);
+    }
+    // every edit folder will not add a new submit event
+    modalFormEl.addEventListener("submit", updateFolderName);
+    folderRenameModal.showModal();
+  });
+});
+
 deleteFolderOptionsBtns.forEach(function (deleteBtn) {
   deleteBtn.addEventListener("click", function (e) {
     const dataFolderId = e.currentTarget.dataset.folderId;
-    console.log("Delete folder btn", dataFolderId);
     fetch(`/library/${dataFolderId}`, { method: "DELETE" }).then(function (
       response
     ) {
@@ -147,4 +191,9 @@ deleteFolderOptionsBtns.forEach(function (deleteBtn) {
       }
     });
   });
+});
+
+// folder rename dialog
+folderRenameCloseBtn.addEventListener("click", function (e) {
+  folderRenameModal.close();
 });
