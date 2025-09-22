@@ -80,6 +80,26 @@ libraryRoute.post("/library/:parentFolderId", async (req, res) => {
     });
   }
 });
+libraryRoute.delete("/library/:parentFolderId", async (req, res) => {
+  const folderId = Number(req.params.parentFolderId);
+  const userId = Number(req.user.id);
+  console.log(userId, userId);
+  try {
+    const deleteFolder = await prisma.folder.delete({
+      where: {
+        id: folderId,
+        userId,
+      },
+    });
+    console.log("Delete folder", deleteFolder);
+
+    if (Object.keys(deleteFolder).length > 0) {
+      return res.status(200).end();
+    }
+  } catch (error) {
+    console.log("Error on deleting folder", error);
+  }
+});
 
 libraryRoute.post("/upload", (req, res, next) => {
   upload(req, res, (error) => {

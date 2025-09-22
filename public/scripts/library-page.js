@@ -139,8 +139,12 @@ deleteFolderOptionsBtns.forEach(function (deleteBtn) {
   deleteBtn.addEventListener("click", function (e) {
     const dataFolderId = e.currentTarget.dataset.folderId;
     console.log("Delete folder btn", dataFolderId);
-    // fetch(`/library/${dataFolderId}`, { method: "DELETE" }).then(function (
-    //   res
-    // ) {});
+    fetch(`/library/${dataFolderId}`, { method: "DELETE" }).then(function (
+      response
+    ) {
+      if (response.ok) {
+        window.location.reload();
+      }
+    });
   });
 });
