@@ -151,7 +151,10 @@ UpdateFolderOptionsBtns.forEach(function (updateBtn) {
     const modalFormInputEl = folderRenameModal.querySelector(
       "#updated-folder-name"
     );
+    folderRenameModal.showModal();
+
     // folder old name
+    modalFormInputEl.focus();
     modalFormInputEl.value = dataFolderName;
     function updateFolderName(e) {
       e.preventDefault();
@@ -176,7 +179,6 @@ UpdateFolderOptionsBtns.forEach(function (updateBtn) {
     }
     // every edit folder will not add a new submit event
     modalFormEl.addEventListener("submit", updateFolderName);
-    folderRenameModal.showModal();
   });
 });
 

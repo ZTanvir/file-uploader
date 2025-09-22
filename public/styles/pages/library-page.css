@@ -125,6 +125,28 @@
   border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
+/* Folder rename dialog */
+#library-page #folder-rename-modal {
+  position: fixed;
+  margin: auto;
+  border: 0;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+#library-page #folder-rename-modal .close-rename-folder-modal-btn {
+  background: transparent;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 8px;
+  padding: 0;
+}
+
+#library-page #folder-rename-modal .close-rename-folder-modal-btn:hover {
+  cursor: pointer;
+  background-color: gray;
+}
 
 #library-page table {
   border-collapse: collapse;
