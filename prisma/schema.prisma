@@ -35,7 +35,7 @@ model Folder {
   updatedAt      DateTime @updatedAt
   // Relation to User
   userId         Int
-  user           User     @relation(fields: [userId], references: [id])
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   // Self relation for parent folders
   parentFolderId Int?
   parentFolder   Folder?  @relation("ParentChildren", fields: [parentFolderId], references: [id], onDelete: Cascade)
@@ -46,15 +46,15 @@ model Folder {
 
 model File {
   id             Int      @id @default(autoincrement())
-  name           String   @unique
+  name           String
   size           String
   path           String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
   // Relation to Folder
-  parentFolder   Folder?  @relation(fields: [parentFolderId], references: [id])
+  parentFolder   Folder?  @relation(fields: [parentFolderId], references: [id], onDelete: Cascade)
   parentFolderId Int?
   // Relation to User
-  User           User?    @relation(fields: [userId], references: [id])
-  userId         Int?
+  User           User     @relation(fields: [userId], references: [id])
+  userId         Int
 }

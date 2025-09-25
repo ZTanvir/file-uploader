@@ -19,6 +19,7 @@ const upload = multer({
 }).single("upload_file");
 
 libraryRoute.get("/library", async (req, res, next) => {
+  // get folder and file with parentFolder column null(Root folder)
   const userId = req.user.id;
   const folderList = await prisma.folder.findMany({
     where: {
@@ -35,6 +36,7 @@ libraryRoute.get("/library", async (req, res, next) => {
   });
 
   const folderData = { parentFolderId: null, folderList, fileList };
+  console.log(fileList);
   return res.render("pages/library-page", { folderData });
 });
 
@@ -48,7 +50,14 @@ libraryRoute.get("/library/:parentFolder", async (req, res, next) => {
       parentFolderId,
     },
   });
-  const folderData = { parentFolderId, folderList };
+  const fileList = await prisma.file.findMany({
+    where: {
+      parentFolderId,
+      userId,
+    },
+  });
+
+  const folderData = { parentFolderId, folderList, fileList };
 
   return res.render("pages/library-page", { folderData });
 });
@@ -148,27 +157,74 @@ libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
     if (!parentFolderId) {
       // when parent folder null means in the root folder
       try {
+        // check file with same name already in File table
+        const files = await prisma.file.findMany({
+          where: {
+            userId,
+            parentFolderId,
+          },
+        });
+        const filterFileByName = files.filter((file) => file.name === fileName);
+
+        if (filterFileByName.length > 0) {
+          return res.status(409).json({
+            error:
+              "You already have a same file in the folder.Please change the filename.",
+          });
+        }
+      } catch (error) {
+        console.error("Error on fetching file from db.");
+      }
+
+      try {
         const file = await prisma.file.create({
           data: {
             name: fileName,
             size: fileSize,
             path: fileDestination,
-            userId: userId,
+            userId,
           },
         });
         console.log("uploaded file", file);
       } catch (error) {
-        console.error("Error when adding file to root folder", error);
-        switch (error.code) {
-          case "P2002": {
-            return res.status(409).json({
-              message:
-                "You already have a same file in the folder.Please change the filename.",
-            });
-          }
-        }
+        console.error(`Error when adding file to ${parentFolderId}`, error);
       }
+      return res.status(200).json({ message: "File upload successfully" });
+    } else {
+      // when parent folder has id means
+      try {
+        // check file with same name already in File table
+        const files = await prisma.file.findMany({
+          where: {
+            userId,
+            parentFolderId,
+          },
+        });
+        const filterFileByName = files.filter((file) => file.name === fileName);
 
+        if (filterFileByName.length > 0) {
+          return res.status(409).json({
+            error:
+              "You already have a same file in the folder.Please change the filename.",
+          });
+        }
+      } catch (error) {
+        console.error("Error on fetching file from db.");
+      }
+      try {
+        const file = await prisma.file.create({
+          data: {
+            name: fileName,
+            size: fileSize,
+            path: fileDestination,
+            parentFolderId: parentFolderId,
+            userId,
+          },
+        });
+        console.log("uploaded file", file);
+      } catch (error) {
+        console.error("Error when adding file to a  subfolder", error);
+      }
       return res.status(200).json({ message: "File upload successfully" });
     }
   });

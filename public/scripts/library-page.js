@@ -68,16 +68,20 @@ uploadFileFromEl.addEventListener("submit", (e) => {
           // display error msg to user
           msgEl.textContent = data.error;
           return;
+        } else if (response.status === 409) {
+          msgEl.textContent = data.error;
+          return;
         }
+      } else if (response.ok) {
+        // file upload successfully
+        // display success msg to user
+        msgEl.textContent = data.message;
+        msgEl.classList.add("success");
+        if (msgEl.classList.contains("failed")) {
+          msgEl.classList.remove("failed");
+        }
+        uploadFileFromEl.reset();
       }
-      // file upload successfully
-      // display success msg to user
-      msgEl.textContent = data.message;
-      msgEl.classList.add("success");
-      if (msgEl.classList.contains("failed")) {
-        msgEl.classList.remove("failed");
-      }
-      uploadFileFromEl.reset();
     } catch (error) {
       console.error(error.message);
     }
