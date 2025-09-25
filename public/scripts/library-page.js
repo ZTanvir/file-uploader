@@ -39,12 +39,14 @@ modalTriggerBtn.addEventListener("click", (e) => {
 
 uploadFileFromEl.addEventListener("submit", (e) => {
   e.preventDefault();
+  const parentFolderId = e.currentTarget.dataset.parentFolderId;
+
   async function uploadFile() {
     try {
       const file = document.querySelector("#upload_file").files[0];
       const formData = new FormData();
       formData.append("upload_file", file);
-      const response = await fetch("/upload", {
+      const response = await fetch(`/upload/${parentFolderId}`, {
         method: "POST",
         body: formData,
       });
@@ -77,7 +79,7 @@ uploadFileFromEl.addEventListener("submit", (e) => {
       }
       uploadFileFromEl.reset();
     } catch (error) {
-      // console.error(error.message);
+      console.error(error.message);
     }
   }
   uploadFile();
