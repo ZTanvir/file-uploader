@@ -64,10 +64,7 @@ loginRoute.post(
     successRedirect: "/",
     failureRedirect: "/log-in",
   }),
-  (req, res, next) => {
-    console.log("User ");
-    
-  }
+  (req, res, next) => {}
 );
 
 loginRoute.get("/log-out", (req, res, next) => {

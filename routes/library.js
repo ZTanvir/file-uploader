@@ -34,9 +34,7 @@ libraryRoute.get("/library", async (req, res, next) => {
       userId,
     },
   });
-
   const folderData = { parentFolderId: null, folderList, fileList };
-  console.log(fileList);
   return res.render("pages/library-page", { folderData });
 });
 
@@ -111,7 +109,7 @@ libraryRoute.delete("/library/:parentFolderId", async (req, res) => {
       return res.status(200).end();
     }
   } catch (error) {
-    console.log("Error on deleting folder", error);
+    console.error("Error on deleting folder", error);
   }
 });
 
@@ -185,7 +183,6 @@ libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
             userId,
           },
         });
-        console.log("uploaded file", file);
       } catch (error) {
         console.error(`Error when adding file to ${parentFolderId}`, error);
       }
@@ -221,7 +218,6 @@ libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
             userId,
           },
         });
-        console.log("uploaded file", file);
       } catch (error) {
         console.error("Error when adding file to a  subfolder", error);
       }
