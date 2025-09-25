@@ -123,11 +123,21 @@
                 </div>
               </td>
             </tr>
-            <% })}else{ %>
+            <% })}if(folderData.fileList.length){
+            folderData.fileList.forEach(file=>{ %>
+            <tr>
+              <td><%=file.name %></td>
+              <td><%=file.size%></td>
+              <td><%=new Date(file.createdAt).toLocaleString()%></td>
+              <td><%=new Date(file.updatedAt).toLocaleString()%></td>
+              <td></td>
+            </tr>
+            <%})}if(!folderData.folderList.length &&
+            !folderData.fileList.length){ %>
             <tr>
               <td colspan="5">The folder is empty</td>
             </tr>
-            <% } %>
+            <%} %>
           </tbody>
         </table>
       </div>

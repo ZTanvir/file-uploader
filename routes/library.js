@@ -20,7 +20,6 @@ const upload = multer({
 
 libraryRoute.get("/library", async (req, res, next) => {
   const userId = req.user.id;
-
   const folderList = await prisma.folder.findMany({
     where: {
       userId,
@@ -28,7 +27,14 @@ libraryRoute.get("/library", async (req, res, next) => {
     },
   });
 
-  const folderData = { parentFolderId: null, folderList };
+  const fileList = await prisma.file.findMany({
+    where: {
+      parentFolderId: null,
+      userId,
+    },
+  });
+
+  const folderData = { parentFolderId: null, folderList, fileList };
   return res.render("pages/library-page", { folderData });
 });
 
