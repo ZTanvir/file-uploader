@@ -25,6 +25,11 @@ const openFileOptionsBtns = document.querySelectorAll(".open-file-options-btn");
 const downloadFileOptionsBtns = document.querySelectorAll(".delete-file-btn");
 const updateFileOptionsBtns = document.querySelectorAll(".update-file-btn");
 const deleteFileOptionsBtns = document.querySelectorAll(".delete-file-btn");
+// rename file
+const fileRenameModal = document.querySelector("#file-rename-modal");
+const fileRenameCloseBtn = document.querySelector(
+  ".close-rename-file-modal-btn"
+);
 // upload dialog
 closeDialog.addEventListener("click", (e) => {
   const isFailed = msgEl.classList.contains("failed");
@@ -229,7 +234,50 @@ openFileOptionsBtns.forEach(function (btn) {
   });
 });
 
+updateFileOptionsBtns.forEach(function (updateBtn) {
+  updateBtn.addEventListener("click", function (e) {
+    const dataFileId = e.currentTarget.dataset.fileId;
+    const dataFileName = e.currentTarget.dataset.fileName;
+    const modalFormEl = fileRenameModal.querySelector("#file-rename-form");
+    const modalFormInputEl =
+      fileRenameModal.querySelector("#updated-file-name");
+    fileRenameModal.showModal();
+
+    // folder old name
+    modalFormInputEl.focus();
+    modalFormInputEl.value = dataFileName;
+    // function updateFolderName(e) {
+    //   e.preventDefault();
+    //   fetch(`/library/${dataFolderId}`, {
+    //     method: "PATCH",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({
+    //       newFolderName: modalFormInputEl.value,
+    //     }),
+    //   })
+    //     .then((res) => {
+    //       if (res.ok) {
+    //         window.location.reload();
+    //       }
+    //     })
+    //     .catch((error) => console.error(error));
+
+    //   folderRenameModal.close();
+    //   modalFormEl.removeEventListener("submit", updateFolderName);
+    // }
+    // every edit folder will not add a new submit event
+    // modalFormEl.addEventListener("submit", updateFolderName);
+  });
+});
+
 // folder rename dialog
 folderRenameCloseBtn.addEventListener("click", function (e) {
   folderRenameModal.close();
+});
+
+// file rename dialog
+fileRenameCloseBtn.addEventListener("click", function (e) {
+  fileRenameModal.close();
 });

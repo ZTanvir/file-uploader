@@ -131,7 +131,8 @@
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 /* Folder rename dialog */
-#library-page #folder-rename-modal {
+#library-page #folder-rename-modal,
+#library-page #file-rename-modal {
   position: fixed;
   margin: auto;
   border: 0;
@@ -139,7 +140,8 @@
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
-#library-page #folder-rename-modal .close-rename-folder-modal-btn {
+#library-page #folder-rename-modal .close-rename-folder-modal-btn,
+#library-page #file-rename-modal .close-rename-file-modal-btn {
   background: transparent;
   display: flex;
   justify-content: center;
@@ -148,9 +150,22 @@
   padding: 0;
 }
 
-#library-page #folder-rename-modal .close-rename-folder-modal-btn:hover {
+#library-page #folder-rename-modal .close-rename-folder-modal-btn:hover,
+#library-page #file-rename-modal .close-rename-file-modal-btn:hover {
   cursor: pointer;
   background-color: gray;
+}
+#library-page #folder-rename-modal button[type="submit"],
+#library-page #file-rename-modal button[type="submit"] {
+  cursor: pointer;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  background-color: var(--color-light-blue);
+}
+#library-page #folder-rename-modal button[type="submit"]:hover,
+#library-page #file-rename-modal button[type="submit"]:hover {
+  background-color: var(--color-azul-dark);
 }
 
 #library-page table {

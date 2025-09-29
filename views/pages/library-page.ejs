@@ -144,8 +144,8 @@
                       <button
                         type="button"
                         class="download-file-btn"
-                        data-folder-id="<%=String(file.id)%>"
-                        data-folder-name="<%=String(file.name)%>"
+                        data-file-id="<%=String(file.id)%>"
+                        data-file-name="<%=String(file.name)%>"
                       >
                         <span class="material-symbols-outlined">download</span>
                         Download
@@ -153,8 +153,8 @@
                       <button
                         type="button"
                         class="update-file-btn"
-                        data-folder-id="<%=String(file.id)%>"
-                        data-folder-name="<%=String(file.name)%>"
+                        data-file-id="<%=String(file.id)%>"
+                        data-file-name="<%=String(file.name)%>"
                       >
                         <span class="material-symbols-outlined"> edit </span
                         >Edit
@@ -220,6 +220,30 @@
                 type="text"
                 name="updated-folder"
                 id="updated-folder-name"
+                required
+              />
+            </div>
+            <button type="submit">Save</button>
+          </form>
+        </div>
+      </dialog>
+
+      <dialog id="file-rename-modal">
+        <div data-stack style="--gutter: 0.5rem">
+          <div data-inline="space-between">
+            <span>Rename </span>
+            <button class="close-rename-file-modal-btn">
+              <span class="material-symbols-outlined"> close </span>
+            </button>
+          </div>
+          <hr />
+          <form id="file-rename-form" data-stack style="--gutter: 0.5rem">
+            <div data-stack style="--gutter: 0.5rem">
+              <label for="updated-file-name">Name</label>
+              <input
+                type="text"
+                name="updated-file"
+                id="updated-file-name"
                 required
               />
             </div>
