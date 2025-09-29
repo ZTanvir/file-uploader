@@ -76,17 +76,17 @@
           </thead>
           <tbody>
             <% if(folderData.folderList.length){
-            folderData.folderList.forEach(item => { %>
+            folderData.folderList.forEach(folder => { %>
             <tr>
               <td>
-                <a href="<%=`/library/${item.id}`%>"> <%= item.name %></a>
+                <a href="<%=`/library/${folder.id}`%>"> <%= folder.name %></a>
               </td>
               <td></td>
               <td class="created-row">
-                <%=`${new Date(item.createdAt).toLocaleString()}` %>
+                <%=`${new Date(folder.createdAt).toLocaleString()}` %>
               </td>
               <td class="updated-row">
-                <%=`${new Date(item.updatedAt).toLocaleString()}` %>
+                <%=`${new Date(folder.updatedAt).toLocaleString()}` %>
               </td>
               <td>
                 <div class="folder-options">
@@ -104,15 +104,15 @@
                       <button
                         type="button"
                         class="update-folder-btn"
-                        data-folder-id="<%=String(item.id)%>"
-                        data-folder-name="<%=String(item.name)%>"
+                        data-folder-id="<%=String(folder.id)%>"
+                        data-folder-name="<%=String(folder.name)%>"
                       >
                         <span class="material-symbols-outlined"> edit </span
                         >Edit
                       </button>
                       <button
                         type="button"
-                        data-folder-id="<%=String(item.id)%>"
+                        data-folder-id="<%=String(folder.id)%>"
                         class="delete-folder-btn"
                       >
                         <span class="material-symbols-outlined"> delete </span>
@@ -130,7 +130,47 @@
               <td><%=file.size%></td>
               <td><%=new Date(file.createdAt).toLocaleString()%></td>
               <td><%=new Date(file.updatedAt).toLocaleString()%></td>
-              <td></td>
+              <td>
+                <div class="file-options">
+                  <span class="material-symbols-outlined open-file-options-btn">
+                    more_vert
+                  </span>
+                  <dialog id="file-options-dialog">
+                    <div
+                      data-stack
+                      style="--gutter: 0.25rem"
+                      class="file-options-button-group"
+                    >
+                      <button
+                        type="button"
+                        class="download-file-btn"
+                        data-folder-id="<%=String(file.id)%>"
+                        data-folder-name="<%=String(file.name)%>"
+                      >
+                        <span class="material-symbols-outlined">download</span>
+                        Download
+                      </button>
+                      <button
+                        type="button"
+                        class="update-file-btn"
+                        data-folder-id="<%=String(file.id)%>"
+                        data-folder-name="<%=String(file.name)%>"
+                      >
+                        <span class="material-symbols-outlined"> edit </span
+                        >Edit
+                      </button>
+                      <button
+                        type="button"
+                        data-folder-id="<%=String(file.id)%>"
+                        class="delete-file-btn"
+                      >
+                        <span class="material-symbols-outlined"> delete </span>
+                        Delete
+                      </button>
+                    </div>
+                  </dialog>
+                </div>
+              </td>
             </tr>
             <%})}if(!folderData.folderList.length &&
             !folderData.fileList.length){ %>

@@ -13,14 +13,18 @@ const folderModalFrom = document.querySelector("#add-folder-dialog__form");
 const openFolderOptionsBtns = document.querySelectorAll(
   ".open-folder-options-btn"
 );
-const UpdateFolderOptionsBtns = document.querySelectorAll(".update-folder-btn");
+const updateFolderOptionsBtns = document.querySelectorAll(".update-folder-btn");
 const deleteFolderOptionsBtns = document.querySelectorAll(".delete-folder-btn");
 // rename folder
 const folderRenameModal = document.querySelector("#folder-rename-modal");
 const folderRenameCloseBtn = document.querySelector(
   ".close-rename-folder-modal-btn"
 );
-
+// File options
+const openFileOptionsBtns = document.querySelectorAll(".open-file-options-btn");
+const downloadFileOptionsBtns = document.querySelectorAll(".delete-file-btn");
+const updateFileOptionsBtns = document.querySelectorAll(".update-file-btn");
+const deleteFileOptionsBtns = document.querySelectorAll(".delete-file-btn");
 // upload dialog
 closeDialog.addEventListener("click", (e) => {
   const isFailed = msgEl.classList.contains("failed");
@@ -80,6 +84,7 @@ uploadFileFromEl.addEventListener("submit", (e) => {
         if (msgEl.classList.contains("failed")) {
           msgEl.classList.remove("failed");
         }
+        window.location.reload();
         uploadFileFromEl.reset();
       }
     } catch (error) {
@@ -149,7 +154,7 @@ openFolderOptionsBtns.forEach(function (btn) {
   });
 });
 
-UpdateFolderOptionsBtns.forEach(function (updateBtn) {
+updateFolderOptionsBtns.forEach(function (updateBtn) {
   updateBtn.addEventListener("click", function (e) {
     const dataFolderId = e.currentTarget.dataset.folderId;
     const dataFolderName = e.currentTarget.dataset.folderName;
@@ -198,6 +203,29 @@ deleteFolderOptionsBtns.forEach(function (deleteBtn) {
         window.location.reload();
       }
     });
+  });
+});
+
+// File dialog
+openFileOptionsBtns.forEach(function (btn) {
+  btn.addEventListener("click", function (event) {
+    const fileOptionsEl = event.currentTarget.parentNode;
+    const openFileDialog = fileOptionsEl.querySelector("#file-options-dialog");
+    // close dialog when click outside
+    function handleCloseModalOptions(e) {
+      const dialogDimensions = openFileDialog.getBoundingClientRect();
+      if (
+        e.clientX < dialogDimensions.left ||
+        e.clientX > dialogDimensions.right ||
+        e.clientY < dialogDimensions.top ||
+        e.clientY > dialogDimensions.bottom
+      ) {
+        openFileDialog.close();
+        e.currentTarget.removeEventListener("click", handleCloseModalOptions);
+      }
+    }
+    window.addEventListener("click", handleCloseModalOptions);
+    openFileDialog.show();
   });
 });
 

@@ -147,13 +147,15 @@ libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
     const fileSize = `${(Number(req.file.size) * 0.001).toFixed(2)} KB`;
     const fileDestination = String(req.file.path);
 
+    console.log("Multer error", error);
+
     if (error) {
       return res.status(500).json({ error });
     } else if (!req.file) {
       return res.status(400).json({ error: "Please upload a file" });
     }
+    // when parent folder null means in the root folder
     if (!parentFolderId) {
-      // when parent folder null means in the root folder
       try {
         // check file with same name already in File table
         const files = await prisma.file.findMany({
@@ -188,7 +190,7 @@ libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
       }
       return res.status(200).json({ message: "File upload successfully" });
     } else {
-      // when parent folder has id means
+      // For parent folder with id means it has parent folder
       try {
         // check file with same name already in File table
         const files = await prisma.file.findMany({
@@ -218,10 +220,10 @@ libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
             userId,
           },
         });
+        return res.status(200).json({ message: "File upload successfully" });
       } catch (error) {
         console.error("Error when adding file to a  subfolder", error);
       }
-      return res.status(200).json({ message: "File upload successfully" });
     }
   });
 });

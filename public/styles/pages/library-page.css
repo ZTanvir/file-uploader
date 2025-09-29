@@ -93,7 +93,8 @@
   background: transparent;
   border: none;
 }
-#library-page .folder-options button {
+#library-page .folder-options button,
+#library-page .file-options button {
   display: flex;
   gap: 0.5rem;
   background-color: transparent;
@@ -102,18 +103,22 @@
   font-size: 1rem;
   border-radius: 8px;
 }
-#library-page .folder-options span:hover {
+#library-page .folder-options span:hover,
+#library-page .file-options span:hover {
   cursor: pointer;
 }
 
-#library-page .folder-options button:hover {
+#library-page .folder-options button:hover,
+#library-page .file-options button:hover {
   background-color: rgb(201, 201, 201);
   cursor: pointer;
 }
-#library-page .folder-options {
+#library-page .folder-options,
+#library-page .file-options {
   position: relative;
 }
-#library-page .folder-options #folder-options-dialog {
+#library-page .folder-options #folder-options-dialog,
+#library-page .file-options #file-options-dialog {
   width: 200px;
   background-color: white;
   position: absolute;
