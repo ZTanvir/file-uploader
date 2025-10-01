@@ -30,6 +30,11 @@ const fileRenameModal = document.querySelector("#file-rename-modal");
 const fileRenameCloseBtn = document.querySelector(
   ".close-rename-file-modal-btn"
 );
+// Previous page
+const redirectPreviousPage = document.querySelector(".redirect-previous-page");
+redirectPreviousPage.addEventListener("click", function (e) {
+  window.history.back();
+});
 // upload dialog
 closeDialog.addEventListener("click", (e) => {
   const isFailed = msgEl.classList.contains("failed");
@@ -245,6 +250,7 @@ updateFileOptionsBtns.forEach(function (updateBtn) {
 
     // folder old name
     modalFormInputEl.focus();
+
     modalFormInputEl.value = dataFileName;
     // function updateFolderName(e) {
     //   e.preventDefault();

@@ -16,6 +16,15 @@
   <body id="library-page">
     <header><%- include("../partials/navbar") %></header>
     <main>
+      <%if(folderData.parentFolderId){ %>
+      <!-- window history api -->
+      <div class="redirect-previous-page">
+        <a data-inline style="--gutter: 0.5rem" href="/library">
+          <span class="material-symbols-outlined"> arrow_back </span>My Library
+        </a>
+      </div>
+      <% } %>
+
       <div class="library-header">
         <div class="my-library">
           <span class="material-symbols-outlined"> folder </span>My Library

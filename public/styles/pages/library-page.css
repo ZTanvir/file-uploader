@@ -162,6 +162,8 @@
   border: none;
   border-radius: 8px;
   background-color: var(--color-light-blue);
+  align-self: flex-end;
+  padding: 5px 12px;
 }
 #library-page #folder-rename-modal button[type="submit"]:hover,
 #library-page #file-rename-modal button[type="submit"]:hover {
@@ -189,6 +191,20 @@
 /* Hide updated and created folder info in mobile screen */
 .folderInfoTable :is(.updated-col, .updated-row, .created-col, .created-row) {
   display: none;
+}
+:is(
+    #library-page .redirect-previous-page > a,
+    #library-page .redirect-previous-page > a span
+  ) {
+  font-size: 1rem;
+}
+#library-page .redirect-previous-page > a {
+  text-decoration: none;
+  color: var(--color-azul);
+}
+#library-page .redirect-previous-page:hover a {
+  color: var(--color-light-blue);
+  opacity: 0.8;
 }
 
 #library-page thead,
