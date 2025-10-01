@@ -151,15 +151,14 @@
                       style="--gutter: 0.25rem"
                       class="file-options-button-group"
                     >
-                      <button
-                        type="button"
-                        class="download-file-btn"
-                        data-file-id="<%=String(file.id)%>"
-                        data-file-name="<%=String(file.name)%>"
-                      >
-                        <span class="material-symbols-outlined">download</span>
-                        Download
-                      </button>
+                      <a href="/library/file/<%=String(file.id)%>">
+                        <button type="button" class="download-file-btn">
+                          <span class="material-symbols-outlined"
+                            >download</span
+                          >
+                          Download
+                        </button>
+                      </a>
                       <button
                         type="button"
                         class="update-file-btn"

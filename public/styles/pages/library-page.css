@@ -102,7 +102,13 @@
   padding: 0.25rem;
   font-size: 1rem;
   border-radius: 8px;
+  width: 100%;
 }
+#library-page .file-options a {
+  text-decoration: none;
+  color: black;
+}
+
 #library-page .folder-options span:hover,
 #library-page .file-options span:hover {
   cursor: pointer;

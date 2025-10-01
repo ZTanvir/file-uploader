@@ -155,8 +155,8 @@ libraryRoute.patch("/library/:parentFolderId", async (req, res) => {
   }
 });
 // Delete file
-libraryRoute.delete("/library/file/:parentFileId", async (req, res) => {
-  const fileId = Number(req.params.parentFileId);
+libraryRoute.delete("/library/file/:fileId", async (req, res) => {
+  const fileId = Number(req.params.fileId);
   const userId = Number(req.user.id);
   try {
     const deleteFile = await prisma.file.delete({
@@ -174,8 +174,8 @@ libraryRoute.delete("/library/file/:parentFileId", async (req, res) => {
   }
 });
 // Edit file name
-libraryRoute.patch("/library/file/:parentFileId", async (req, res) => {
-  const fileId = Number(req.params.parentFileId);
+libraryRoute.patch("/library/file/:fileId", async (req, res) => {
+  const fileId = Number(req.params.fileId);
   const userId = Number(req.user.id);
   const newFileName = String(req.body.newFileName);
   try {
@@ -194,6 +194,25 @@ libraryRoute.patch("/library/file/:parentFileId", async (req, res) => {
   } catch (error) {
     console.error("Error on rename new folder:", error);
   }
+});
+// Download file
+libraryRoute.get("/library/file/:fileId", async (req, res) => {
+  const fileId = Number(req.params.fileId);
+  const userId = Number(req.user.id);
+  const fileData = await prisma.file.findFirst({
+    where: {
+      userId,
+      id: fileId,
+    },
+  });
+  const { path } = fileData;
+  res.download(path, (error) => {
+    if (error) {
+      console.error(error);
+    } else {
+      console.log("File downloaded successfully");
+    }
+  });
 });
 
 libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {

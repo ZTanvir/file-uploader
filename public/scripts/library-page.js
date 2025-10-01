@@ -22,7 +22,7 @@ const folderRenameCloseBtn = document.querySelector(
 );
 // File options
 const openFileOptionsBtns = document.querySelectorAll(".open-file-options-btn");
-const downloadFileOptionsBtns = document.querySelectorAll(".delete-file-btn");
+const downloadFileOptionsBtns = document.querySelectorAll(".download-file-btn");
 const updateFileOptionsBtns = document.querySelectorAll(".update-file-btn");
 const deleteFileOptionsBtns = document.querySelectorAll(".delete-file-btn");
 // rename file
@@ -254,7 +254,7 @@ updateFileOptionsBtns.forEach(function (updateBtn) {
     modalFormInputEl.focus();
 
     modalFormInputEl.value = dataFileName;
-    function updateFolderName(e) {
+    function updateFileName(e) {
       e.preventDefault();
       fetch(`/library/file/${dataFileId}`, {
         method: "PATCH",
@@ -273,17 +273,16 @@ updateFileOptionsBtns.forEach(function (updateBtn) {
         .catch((error) => console.error(error));
 
       folderRenameModal.close();
-      modalFormEl.removeEventListener("submit", updateFolderName);
+      modalFormEl.removeEventListener("submit", updateFileName);
     }
     // every edit folder will not add a new submit event
-    modalFormEl.addEventListener("submit", updateFolderName);
+    modalFormEl.addEventListener("submit", updateFileName);
   });
 });
 
 deleteFileOptionsBtns.forEach(function (deleteBtn) {
   deleteBtn.addEventListener("click", function (e) {
     const dataFileId = e.currentTarget.dataset.fileId;
-    console.log("file id", dataFileId);
     fetch(`/library/file/${dataFileId}`, { method: "DELETE" }).then(function (
       response
     ) {
