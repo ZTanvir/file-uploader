@@ -32,9 +32,11 @@ const fileRenameCloseBtn = document.querySelector(
 );
 // Previous page
 const redirectPreviousPage = document.querySelector(".redirect-previous-page");
-redirectPreviousPage.addEventListener("click", function (e) {
-  window.history.back();
-});
+if (redirectPreviousPage) {
+  redirectPreviousPage.addEventListener("click", function (e) {
+    window.history.back();
+  });
+}
 // upload dialog
 closeDialog.addEventListener("click", (e) => {
   const isFailed = msgEl.classList.contains("failed");

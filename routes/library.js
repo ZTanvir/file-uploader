@@ -34,13 +34,27 @@ libraryRoute.get("/library", async (req, res, next) => {
       userId,
     },
   });
-  const folderData = { parentFolderId: null, folderList, fileList };
+  const folderData = {
+    parentFolder: { id: null, name: null },
+    folderList,
+    fileList,
+  };
   return res.render("pages/library-page", { folderData });
 });
 
 libraryRoute.get("/library/:parentFolder", async (req, res, next) => {
   const userId = req.user.id;
   const parentFolderId = Number(req.params.parentFolder);
+
+  const parentFolder = await prisma.folder.findFirst({
+    where: {
+      userId,
+      id: parentFolderId,
+    },
+    select: {
+      name: true,
+    },
+  });
 
   const folderList = await prisma.folder.findMany({
     where: {
@@ -54,8 +68,13 @@ libraryRoute.get("/library/:parentFolder", async (req, res, next) => {
       userId,
     },
   });
+  const parentFolderName = parentFolder.name;
 
-  const folderData = { parentFolderId, folderList, fileList };
+  const folderData = {
+    parentFolder: { id: parentFolderId, name: parentFolderName },
+    folderList,
+    fileList,
+  };
 
   return res.render("pages/library-page", { folderData });
 });

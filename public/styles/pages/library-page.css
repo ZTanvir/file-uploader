@@ -203,6 +203,7 @@
   color: var(--color-azul);
 }
 #library-page .redirect-previous-page:hover a {
+  cursor: pointer;
   color: var(--color-light-blue);
   opacity: 0.8;
 }

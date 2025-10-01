@@ -16,11 +16,12 @@
   <body id="library-page">
     <header><%- include("../partials/navbar") %></header>
     <main>
-      <%if(folderData.parentFolderId){ %>
+      <%if(folderData.parentFolder.id){ %>
       <!-- window history api -->
       <div class="redirect-previous-page">
-        <a data-inline style="--gutter: 0.5rem" href="/library">
-          <span class="material-symbols-outlined"> arrow_back </span>My Library
+        <a data-inline style="--gutter: 0.5rem">
+          <span class="material-symbols-outlined"> arrow_back </span
+          ><%=folderData.parentFolder.name%>
         </a>
       </div>
       <% } %>
@@ -43,7 +44,7 @@
           <dialog id="add-folder-dialog">
             <form
               data-stack
-              data-parent-folder-id="<%=String(folderData.parentFolderId)%>"
+              data-parent-folder-id="<%=String(folderData.parentFolder.id)%>"
               style="--gutter: 0.5rem"
               id="add-folder-dialog__form"
             >
@@ -197,7 +198,7 @@
           method="post"
           enctype="multipart/form-data"
           data-stack
-          data-parent-folder-id="<%=String(folderData.parentFolderId)%>"
+          data-parent-folder-id="<%=String(folderData.parentFolder.id)%>"
           style="--gutter: 0.75rem"
         >
           <div data-inline="space-between">
