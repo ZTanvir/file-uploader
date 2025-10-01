@@ -79,7 +79,7 @@ libraryRoute.get("/library/:parentFolder", async (req, res, next) => {
   return res.render("pages/library-page", { folderData });
 });
 
-libraryRoute.post("/library/:parentFolderId", async (req, res) => {
+libraryRoute.post("/library/folder/:parentFolderId", async (req, res) => {
   const parentFolderId =
     req.params.parentFolderId === "null"
       ? null
@@ -114,7 +114,7 @@ libraryRoute.post("/library/:parentFolderId", async (req, res) => {
   }
 });
 // Delete folder
-libraryRoute.delete("/library/:parentFolderId", async (req, res) => {
+libraryRoute.delete("/library/folder/:parentFolderId", async (req, res) => {
   const folderId = Number(req.params.parentFolderId);
   const userId = Number(req.user.id);
   try {
@@ -133,7 +133,7 @@ libraryRoute.delete("/library/:parentFolderId", async (req, res) => {
   }
 });
 // Edit folder name
-libraryRoute.patch("/library/:parentFolderId", async (req, res) => {
+libraryRoute.patch("/library/folder/:parentFolderId", async (req, res) => {
   const folderId = Number(req.params.parentFolderId);
   const userId = Number(req.user.id);
   const newFolderName = String(req.body.newFolderName);

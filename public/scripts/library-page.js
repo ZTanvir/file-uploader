@@ -122,7 +122,7 @@ folderModalFrom.addEventListener("submit", async function (e) {
   const requestBody = JSON.stringify(Object.fromEntries(formData));
   const parentFolder = e.target.dataset.parentFolderId;
 
-  fetch(`/library/${parentFolder}`, {
+  fetch(`/library/folder/${parentFolder}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -181,7 +181,7 @@ updateFolderOptionsBtns.forEach(function (updateBtn) {
     modalFormInputEl.value = dataFolderName;
     function updateFolderName(e) {
       e.preventDefault();
-      fetch(`/library/${dataFolderId}`, {
+      fetch(`/library/folder/${dataFolderId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -208,13 +208,13 @@ updateFolderOptionsBtns.forEach(function (updateBtn) {
 deleteFolderOptionsBtns.forEach(function (deleteBtn) {
   deleteBtn.addEventListener("click", function (e) {
     const dataFolderId = e.currentTarget.dataset.folderId;
-    fetch(`/library/${dataFolderId}`, { method: "DELETE" }).then(function (
-      response
-    ) {
-      if (response.ok) {
-        window.location.reload();
+    fetch(`/library/folder/${dataFolderId}`, { method: "DELETE" }).then(
+      function (response) {
+        if (response.ok) {
+          window.location.reload();
+        }
       }
-    });
+    );
   });
 });
 
