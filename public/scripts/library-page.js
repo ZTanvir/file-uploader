@@ -254,29 +254,29 @@ updateFileOptionsBtns.forEach(function (updateBtn) {
     modalFormInputEl.focus();
 
     modalFormInputEl.value = dataFileName;
-    // function updateFolderName(e) {
-    //   e.preventDefault();
-    //   fetch(`/library/${dataFolderId}`, {
-    //     method: "PATCH",
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({
-    //       newFolderName: modalFormInputEl.value,
-    //     }),
-    //   })
-    //     .then((res) => {
-    //       if (res.ok) {
-    //         window.location.reload();
-    //       }
-    //     })
-    //     .catch((error) => console.error(error));
+    function updateFolderName(e) {
+      e.preventDefault();
+      fetch(`/library/file/${dataFileId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          newFileName: modalFormInputEl.value,
+        }),
+      })
+        .then((res) => {
+          if (res.ok) {
+            window.location.reload();
+          }
+        })
+        .catch((error) => console.error(error));
 
-    //   folderRenameModal.close();
-    //   modalFormEl.removeEventListener("submit", updateFolderName);
-    // }
+      folderRenameModal.close();
+      modalFormEl.removeEventListener("submit", updateFolderName);
+    }
     // every edit folder will not add a new submit event
-    // modalFormEl.addEventListener("submit", updateFolderName);
+    modalFormEl.addEventListener("submit", updateFolderName);
   });
 });
 
