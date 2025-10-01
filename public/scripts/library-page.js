@@ -280,6 +280,20 @@ updateFileOptionsBtns.forEach(function (updateBtn) {
   });
 });
 
+deleteFileOptionsBtns.forEach(function (deleteBtn) {
+  deleteBtn.addEventListener("click", function (e) {
+    const dataFileId = e.currentTarget.dataset.fileId;
+    console.log("file id", dataFileId);
+    fetch(`/library/file/${dataFileId}`, { method: "DELETE" }).then(function (
+      response
+    ) {
+      if (response.ok) {
+        window.location.reload();
+      }
+    });
+  });
+});
+
 // folder rename dialog
 folderRenameCloseBtn.addEventListener("click", function (e) {
   folderRenameModal.close();

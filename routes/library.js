@@ -113,6 +113,7 @@ libraryRoute.post("/library/:parentFolderId", async (req, res) => {
     });
   }
 });
+// Delete folder
 libraryRoute.delete("/library/:parentFolderId", async (req, res) => {
   const folderId = Number(req.params.parentFolderId);
   const userId = Number(req.user.id);
@@ -131,7 +132,7 @@ libraryRoute.delete("/library/:parentFolderId", async (req, res) => {
     console.error("Error on deleting folder", error);
   }
 });
-
+// Edit folder name
 libraryRoute.patch("/library/:parentFolderId", async (req, res) => {
   const folderId = Number(req.params.parentFolderId);
   const userId = Number(req.user.id);
@@ -153,7 +154,26 @@ libraryRoute.patch("/library/:parentFolderId", async (req, res) => {
     console.error("Error on rename new folder:", error);
   }
 });
+// Delete file
+libraryRoute.delete("/library/file/:parentFileId", async (req, res) => {
+  const fileId = Number(req.params.parentFileId);
+  const userId = Number(req.user.id);
+  console.log(fileId, userId);
+  try {
+    const deleteFile = await prisma.file.delete({
+      where: {
+        id: fileId,
+        userId,
+      },
+    });
 
+    if (Object.keys(deleteFile).length > 0) {
+      return res.status(200).end();
+    }
+  } catch (error) {
+    console.error("Error on deleting folder", error);
+  }
+});
 libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
   const parentFolderId =
     req.params.parentFolderId === "null"
