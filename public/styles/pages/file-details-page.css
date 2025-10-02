@@ -1,0 +1,58 @@
+body,
+html {
+  height: 100%;
+}
+#file-details-page {
+  display: grid;
+  grid-template-rows: max-content auto max-content;
+}
+#file-details-page main {
+  padding: 2rem;
+}
+#file-details-page .previous-page {
+  padding-bottom: 1.5rem;
+  cursor: pointer;
+  color: var(--color-azul);
+}
+#file-details-page .previous-page:hover {
+  color: var(--color-azul-dark);
+  opacity: 0.8;
+}
+#file-details-page .previous-page span {
+  font-size: 1rem;
+}
+#file-details-page .file-details-container {
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  color: var(--color-ebony-clay);
+}
+#file-details-page .file-title {
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+#file-details-page .download-file-link {
+  text-decoration: none;
+}
+#file-details-page .download-file-btn {
+  background-color: var(--color-light-blue);
+  color: white;
+  padding: 0.45rem 0.85rem;
+  border: none;
+  border-radius: 8px;
+}
+#file-details-page :is(.download-file-btn:hover, .download-file-btn:focus) {
+  cursor: pointer;
+  background-color: var(--color-azul-dark);
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  #file-details-page .file-title {
+    font-size: 1.5rem;
+  }
+  #file-details-page .download-file-link {
+    align-self: flex-end;
+  }
+}

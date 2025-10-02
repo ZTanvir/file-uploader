@@ -216,7 +216,15 @@ libraryRoute.get("/library/file/:fileId", async (req, res) => {
 });
 // Get details of a file
 libraryRoute.get("/library/file/fileDetails/:fileId", async (req, res) => {
-  return res.render("pages/file-details-page");
+  const fileId = Number(req.params.fileId);
+  const userId = Number(req.user.id);
+  const file = await prisma.file.findFirst({
+    where: {
+      id: fileId,
+      userId,
+    },
+  });
+  return res.render("pages/file-details-page", { file });
 });
 
 libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {

@@ -14,24 +14,48 @@
   </head>
   <body id="file-details-page">
     <header><%- include("../partials/navbar") %></header>
-    <main data-center="center-child">
+    <main>
       <div>
-        <div>
+        <div class="previous-page" data-inline style="--gutter: 0.5rem">
           <span class="material-symbols-outlined"> arrow_back </span>
           Back to My Library
         </div>
-        <div>
-          <h1></h1>
-          <p></p>
-          <p></p>
-          <p></p>
-          <button>
-            <span class="material-symbols-outlined">download</span> Download
-          </button>
+        <div
+          data-stack
+          style="--gutter: 0.25rem"
+          class="file-details-container"
+        >
+          <% if(!file){ %>
+          <h2 data-center="center-text">File not found.</h2>
+          <% }else{ %>
+          <h1 class="file-title"><%=file.name%></h1>
+          <p><b>Size: </b><%=file.size%></p>
+          <p>
+            <b>Created At: </b><%=new Date(file.createdAt).toLocaleString()%>
+          </p>
+          <p>
+            <b>Updated At: </b><%=new Date(file.updatedAt).toLocaleString()%>
+          </p>
+          <a class="download-file-link" href="/library/file/<%=file.id%>">
+            <button
+              data-inline
+              style="--gutter: 0.5rem"
+              class="download-file-btn"
+            >
+              <span class="material-symbols-outlined">download</span> Download
+            </button>
+          </a>
+
+          <% } %>
         </div>
       </div>
     </main>
     <%- include("../partials/footer") %>
-    <script></script>
+    <script>
+      const previousPage = document.querySelector(".previous-page");
+      previousPage.addEventListener("click", (e) => {
+        window.history.back();
+      });
+    </script>
   </body>
 </html>
