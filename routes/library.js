@@ -214,6 +214,10 @@ libraryRoute.get("/library/file/:fileId", async (req, res) => {
     }
   });
 });
+// Get details of a file
+libraryRoute.get("/library/file/fileDetails/:fileId", async (req, res) => {
+  return res.render("pages/file-details-page");
+});
 
 libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
   const parentFolderId =
