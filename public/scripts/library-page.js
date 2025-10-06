@@ -74,10 +74,10 @@ uploadFileFromEl.addEventListener("submit", (e) => {
           msgEl.classList.remove("success");
         }
         if (response.status === 500) {
-          // file size extends the limit 10mb
+          // file size extends the limit 5mb
           // display error msg to user
           msgEl.textContent =
-            "File size exceeds the 10MB limit. Please choose a smaller file.";
+            "File size exceeds the 5MB limit. Please choose a smaller file.";
           return;
         } else if (response.status === 400) {
           // file not found

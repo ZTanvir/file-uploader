@@ -10,7 +10,7 @@ const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 10000000 }, // 10 mb file size limit
+  limits: { fileSize: 5000000 }, // 10 mb file size limit
 }).single("upload_file");
 
 libraryRoute.get("/library", async (req, res, next) => {
