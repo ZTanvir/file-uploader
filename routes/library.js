@@ -3,15 +3,10 @@ const libraryRoute = express.Router();
 const path = require("node:path");
 const multer = require("multer");
 const prisma = require("../utils/prismaClient");
+const { supabase } = require("../utils/superbase");
+const { decode } = require("base64-arraybuffer");
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, `uploads/`);
-  },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
-  },
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
@@ -232,89 +227,64 @@ libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
     req.params.parentFolderId === "null"
       ? null
       : Number(req.params.parentFolderId);
-  const userId = req.user.id;
+  const user = req.user;
 
-  upload(req, res, async (error) => {
-    const fileName = req.file.filename;
-    const fileSize = `${(Number(req.file.size) * 0.001).toFixed(2)} KB`;
-    const fileDestination = String(req.file.path);
+  upload(req, res, async (err) => {
+    const file = req.file;
 
-    console.log("Multer error", error);
-
-    if (error) {
-      return res.status(500).json({ error });
+    if (err instanceof multer.MulterError) {
+      return res.status(500).json({ err });
     } else if (!req.file) {
       return res.status(400).json({ error: "Please upload a file" });
     }
-    // when parent folder null means in the root folder
-    if (!parentFolderId) {
-      try {
-        // check file with same name already in File table
-        const files = await prisma.file.findMany({
-          where: {
-            userId,
-            parentFolderId,
-          },
-        });
-        const filterFileByName = files.filter((file) => file.name === fileName);
+    const fileSize = `${(Number(req.file.size) * 0.001).toFixed(2)} KB`;
+    const fileBase64 = decode(file.buffer.toString("base64"));
+    const fileName = file.originalname;
 
-        if (filterFileByName.length > 0) {
-          return res.status(409).json({
-            error:
-              "You already have a same file in the folder.Please change the filename.",
-          });
-        }
-      } catch (error) {
-        console.error("Error on fetching file from db.");
-      }
-
-      try {
-        const file = await prisma.file.create({
-          data: {
-            name: fileName,
-            size: fileSize,
-            path: fileDestination,
-            userId,
-          },
-        });
-      } catch (error) {
-        console.error(`Error when adding file to ${parentFolderId}`, error);
-      }
-      return res.status(200).json({ message: "File upload successfully" });
+    // file with same name will not store in same folder
+    const filePathSupabase = `${user.username}-${user.id}/${parentFolderId}-${fileName}`;
+    // upload file to supabase
+    const { data, error } = await supabase.storage
+      .from("file-uploads")
+      .upload(`${filePathSupabase}`, fileBase64);
+    const fileDestination = data?.path;
+    if (error) {
+      return res.status(400).json({ error: error.message });
     } else {
-      // For parent folder with id means it has parent folder
-      try {
-        // check file with same name already in File table
-        const files = await prisma.file.findMany({
-          where: {
-            userId,
-            parentFolderId,
-          },
-        });
-        const filterFileByName = files.filter((file) => file.name === fileName);
-
-        if (filterFileByName.length > 0) {
-          return res.status(409).json({
-            error:
-              "You already have a same file in the folder.Please change the filename.",
+      if (!parentFolderId) {
+        // when parent folder null means in the root folder
+        try {
+          const file = await prisma.file.create({
+            data: {
+              name: fileName,
+              size: fileSize,
+              path: fileDestination,
+              userId: user?.id,
+            },
           });
+        } catch (error) {
+          console.error(`Error when adding file to root folder`, error);
         }
-      } catch (error) {
-        console.error("Error on fetching file from db.");
-      }
-      try {
-        const file = await prisma.file.create({
-          data: {
-            name: fileName,
-            size: fileSize,
-            path: fileDestination,
-            parentFolderId: parentFolderId,
-            userId,
-          },
-        });
         return res.status(200).json({ message: "File upload successfully" });
-      } catch (error) {
-        console.error("Error when adding file to a  subfolder", error);
+      } else {
+        // when parent folder has id means it has parent folder
+        try {
+          const file = await prisma.file.create({
+            data: {
+              name: fileName,
+              size: fileSize,
+              path: fileDestination,
+              parentFolderId: parentFolderId,
+              userId: user?.id,
+            },
+          });
+          return res.status(200).json({ message: "File upload successfully" });
+        } catch (error) {
+          console.error(
+            `Error when adding file to a  subfolder with id ${parentFolderId}`,
+            error
+          );
+        }
       }
     }
   });
