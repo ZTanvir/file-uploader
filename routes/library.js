@@ -1,10 +1,10 @@
 const express = require("express");
 const libraryRoute = express.Router();
-const path = require("node:path");
 const multer = require("multer");
 const prisma = require("../utils/prismaClient");
 const { supabase } = require("../utils/superbase");
 const { decode } = require("base64-arraybuffer");
+const e = require("express");
 
 const storage = multer.memoryStorage();
 
@@ -171,6 +171,7 @@ libraryRoute.delete("/library/file/:fileId", async (req, res) => {
   if (error) {
     console.log("Error on deleting file from supabase", error);
   } else {
+    // delete file log from db
     try {
       const deleteFile = await prisma.file.delete({
         where: {
@@ -190,23 +191,51 @@ libraryRoute.delete("/library/file/:fileId", async (req, res) => {
 // Edit file name
 libraryRoute.patch("/library/file/:fileId", async (req, res) => {
   const fileId = Number(req.params.fileId);
-  const userId = Number(req.user.id);
+  const user = req.user;
+  const userName = user.username;
+  const userId = Number(user.id);
   const newFileName = String(req.body.newFileName);
+  // get file path from db
+  let fileData = null;
   try {
-    const updateFile = await prisma.file.update({
+    const fileDetails = await prisma.file.findFirst({
       where: {
         userId,
         id: fileId,
       },
-      data: {
-        name: newFileName,
-      },
     });
-    if (Object.keys(updateFile).length > 0) {
-      return res.status(200).end();
-    }
+    fileData = fileDetails;
   } catch (error) {
-    console.error("Error on rename new folder:", error);
+    console.error("Could not find the file in db on download request", error);
+  }
+  // rename the path in supabase
+  if (fileData !== null) {
+    const newFilePath = `${userName}-${userId}/${fileData.parentFolderId}/${newFileName}`;
+    const { data, error } = await supabase.storage
+      .from("file-uploads")
+      .move(`${fileData.path}`, `${newFilePath}`);
+    if (error) {
+      console.error("Error when rename file ", error);
+    } else {
+      // update the path in db
+      try {
+        const updateFile = await prisma.file.update({
+          where: {
+            userId,
+            id: fileId,
+          },
+          data: {
+            name: newFileName,
+            path: newFilePath,
+          },
+        });
+        if (Object.keys(updateFile).length > 0) {
+          return res.status(200).end();
+        }
+      } catch (error) {
+        console.error("Error on rename new folder:", error);
+      }
+    }
   }
 });
 // Download file
@@ -220,13 +249,19 @@ libraryRoute.get("/library/file/:fileId", async (req, res) => {
     },
   });
   const { path } = fileData;
-  res.download(path, (error) => {
-    if (error) {
-      console.error(error);
-    } else {
-      console.log("File downloaded successfully");
-    }
-  });
+  const { data, error } = supabase.storage
+    .from("file-uploads")
+    .getPublicUrl(`${path}`, {
+      download: true,
+    });
+  if (error) {
+    console.error(
+      "Error while getting download url from supabase for this file.",
+      error
+    );
+  } else {
+    return res.status(200).redirect(data.publicUrl);
+  }
 });
 // Get details of a file
 libraryRoute.get("/library/file/fileDetails/:fileId", async (req, res) => {
@@ -261,7 +296,8 @@ libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
     const fileName = file.originalname;
 
     // file with same name will not store in same folder
-    const filePathSupabase = `${user.username}-${user.id}/${parentFolderId}-${fileName}`;
+    // store by userName/folder/file
+    const filePathSupabase = `${user.username}-${user.id}/${parentFolderId}/${fileName}`;
     // upload file to supabase
     const { data, error } = await supabase.storage
       .from("file-uploads")
