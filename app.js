@@ -21,13 +21,13 @@ app.use(express.json());
 app.use(
   expressSession({
     cookie: {
-      maxAge: 7 * 24 * 60 * 60 * 1000, // ms
+      maxAge: 1 * 24 * 60 * 60 * 1000, // ms 	Determines how long the user stays logged in before their session cookie expires.
     },
     secret: process.env.SESSION_SECRET,
     resave: true,
     saveUninitialized: true,
     store: new PrismaSessionStore(new PrismaClient(), {
-      checkPeriod: 2 * 60 * 1000, //ms
+      checkPeriod: 1 * 24 * 60 * 60 * 1000, //ms Determines how often the database runs cleanup to remove expired session records.
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,
     }),

@@ -16,14 +16,14 @@ const upload = multer({
 libraryRoute.get("/library", async (req, res, next) => {
   // get folder and file with parentFolder column null(Root folder)
   const userId = req.user.id;
-  const folderList = await prisma.folder.findMany({
+  const folderList = await prisma.folder.deleteMany({
     where: {
       userId,
       parentFolderId: null,
     },
   });
 
-  const fileList = await prisma.file.findMany({
+  const fileList = await prisma.file.deleteMany({
     where: {
       parentFolderId: null,
       userId,
