@@ -153,19 +153,38 @@ libraryRoute.patch("/library/folder/:parentFolderId", async (req, res) => {
 libraryRoute.delete("/library/file/:fileId", async (req, res) => {
   const fileId = Number(req.params.fileId);
   const userId = Number(req.user.id);
-  try {
-    const deleteFile = await prisma.file.delete({
-      where: {
-        id: fileId,
-        userId,
-      },
-    });
 
-    if (Object.keys(deleteFile).length > 0) {
-      return res.status(200).end();
+  // get file path
+  const { path } = await prisma.file.findFirst({
+    where: {
+      id: fileId,
+      userId,
+    },
+    select: {
+      path: true,
+    },
+  });
+  // delete file from supabase
+  const { data, error } = await supabase.storage
+    .from("file-uploads")
+    .remove([`${path}`]);
+  if (error) {
+    console.log("Error on deleting file from supabase", error);
+  } else {
+    try {
+      const deleteFile = await prisma.file.delete({
+        where: {
+          id: fileId,
+          userId,
+        },
+      });
+
+      if (Object.keys(deleteFile).length > 0) {
+        return res.status(200).end();
+      }
+    } catch (error) {
+      console.error("Error on deleting folder", error);
     }
-  } catch (error) {
-    console.error("Error on deleting folder", error);
   }
 });
 // Edit file name
@@ -221,7 +240,7 @@ libraryRoute.get("/library/file/fileDetails/:fileId", async (req, res) => {
   });
   return res.render("pages/file-details-page", { file });
 });
-
+// Upload file
 libraryRoute.post("/upload/:parentFolderId", (req, res, next) => {
   const parentFolderId =
     req.params.parentFolderId === "null"
