@@ -14,13 +14,18 @@ const upload = multer({
 
 libraryRoute.get("/library", async (req, res, next) => {
   // get folder and file with parentFolder column null(Root folder)
-  const userId = req.user.id;
+  const userId = req.user?.id;
   const folderList = await prisma.folder.findMany({
     where: {
       userId,
       parentFolderId: null,
     },
   });
+
+  if (!userId) {
+    // when unregister user try to visit /library
+    return res.redirect("/log-in");
+  }
 
   const fileList = await prisma.file.findMany({
     where: {
@@ -37,9 +42,12 @@ libraryRoute.get("/library", async (req, res, next) => {
 });
 
 libraryRoute.get("/library/:parentFolder", async (req, res, next) => {
-  const userId = req.user.id;
+  const userId = req.user?.id;
   const parentFolderId = Number(req.params.parentFolder);
-
+  if (!userId) {
+    // when unregister user try to visit /library
+    return res.redirect("/log-in");
+  }
   const parentFolder = await prisma.folder.findFirst({
     where: {
       userId,
