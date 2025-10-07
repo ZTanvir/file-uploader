@@ -6,12 +6,13 @@
 #library-page main {
   flex-grow: 1;
   justify-content: center;
+  padding: 1rem;
 }
 #library-page .library-header {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: 1rem;
+  padding: 1rem 0rem;
 }
 .file-upload-modal {
   position: fixed;
@@ -130,7 +131,7 @@
   position: absolute;
   z-index: 1;
   top: 0;
-  left: -57px;
+  left: -129px;
   padding: 10px;
   border: none;
   border-radius: 8px;
@@ -139,6 +140,7 @@
 /* Folder rename dialog */
 #library-page #folder-rename-modal,
 #library-page #file-rename-modal {
+  min-width: 80%;
   position: fixed;
   margin: auto;
   border: 0;
@@ -193,10 +195,14 @@
 .folderInfoTable {
   margin-top: 1rem;
   margin-bottom: 1rem;
+  width: 100%;
 }
 /* Hide updated and created folder info in mobile screen */
 .folderInfoTable :is(.updated-col, .updated-row, .created-col, .created-row) {
   display: none;
+}
+#library-page .redirect-previous-page {
+  margin-right: auto;
 }
 :is(
     #library-page .redirect-previous-page > a,
@@ -212,6 +218,22 @@
   cursor: pointer;
   color: var(--color-light-blue);
   opacity: 0.8;
+}
+#library-page :is(.folder-name-row > a, .file-name-row > a) {
+  text-decoration: none;
+  cursor: pointer;
+  color: var(--color-azul);
+}
+#library-page
+  :is(.folder-name-row > a > :first-child, .file-name-row > a > :first-child) {
+  font-size: 16px;
+}
+#library-page
+  :is(
+    .folder-name-row > a:hover > :last-child,
+    .file-name-row > a:hover > :last-child
+  ) {
+  text-decoration: underline;
 }
 
 #library-page thead,
@@ -269,6 +291,9 @@
 
 /* Large devices (laptops/desktops, 992px and up) */
 @media only screen and (min-width: 992px) {
+  #library-page main {
+    padding: 2rem;
+  }
   #library-page .library-header {
     flex-direction: row;
   }

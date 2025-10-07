@@ -16,20 +16,20 @@
   <body id="library-page">
     <header><%- include("../partials/navbar") %></header>
     <main>
-      <%if(folderData.parentFolder.id){ %>
-      <!-- window history api -->
-      <div class="redirect-previous-page">
-        <a data-inline style="--gutter: 0.5rem">
-          <span class="material-symbols-outlined"> arrow_back </span
-          ><%=folderData.parentFolder.name%>
-        </a>
-      </div>
-      <% } %>
-
       <div class="library-header">
+        <%if(folderData.parentFolder.id){ %>
+        <!-- window history api -->
+        <div class="redirect-previous-page">
+          <a data-inline style="--gutter: 0.5rem">
+            <span class="material-symbols-outlined"> arrow_back </span
+            ><%=folderData.parentFolder.name%>
+          </a>
+        </div>
+        <% }else{ %>
         <div class="my-library">
           <span class="material-symbols-outlined"> folder </span>My Library
         </div>
+        <% } %>
         <!-- Create folder based on folder name -->
         <div class="new-folder">
           <button
@@ -88,8 +88,14 @@
             <% if(folderData.folderList.length){
             folderData.folderList.forEach(folder => { %>
             <tr>
-              <td>
-                <a href="<%=`/library/${folder.id}`%>"> <%= folder.name %></a>
+              <td class="folder-name-row">
+                <a
+                  data-inline
+                  style="--gutter: 0.5rem"
+                  href="<%=`/library/${folder.id}`%>"
+                  ><span class="material-symbols-outlined"> folder </span
+                  ><span> <%= folder.name %></span></a
+                >
               </td>
               <td></td>
               <td class="created-row">
@@ -136,14 +142,22 @@
             <% })}if(folderData.fileList.length){
             folderData.fileList.forEach(file=>{ %>
             <tr>
-              <td>
-                <a href="/library/file/fileDetails/<%=String(file.id)%>"
-                  ><%=file.name %></a
+              <td class="file-name-row">
+                <a
+                  data-inline
+                  style="--gutter: 0.5rem"
+                  href="/library/file/fileDetails/<%=String(file.id)%>"
+                  ><span class="material-symbols-outlined"> files </span
+                  ><span> <%=file.name %></span></a
                 >
               </td>
               <td><%=file.size%></td>
-              <td><%=new Date(file.createdAt).toLocaleString()%></td>
-              <td><%=new Date(file.updatedAt).toLocaleString()%></td>
+              <td class="created-row">
+                <%=new Date(file.createdAt).toLocaleString()%>
+              </td>
+              <td class="updated-row">
+                <%=new Date(file.updatedAt).toLocaleString()%>
+              </td>
               <td>
                 <div class="file-options">
                   <span class="material-symbols-outlined open-file-options-btn">
@@ -212,7 +226,7 @@
           </div>
           <p class="msg"></p>
           <input id="upload_file" type="file" name="upload_file" />
-          <p class="file-max-size">(Max: 10MB)</p>
+          <p class="file-max-size">(Max: 5MB)</p>
           <button class="submit-btn" type="submit">Upload File</button>
         </form>
       </dialog>

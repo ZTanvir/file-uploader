@@ -4,13 +4,12 @@ const multer = require("multer");
 const prisma = require("../utils/prismaClient");
 const { supabase } = require("../utils/superbase");
 const { decode } = require("base64-arraybuffer");
-const e = require("express");
 
 const storage = multer.memoryStorage();
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5000000 }, // 10 mb file size limit
+  limits: { fileSize: 5000000 }, // 5 mb file size limit
 }).single("upload_file");
 
 libraryRoute.get("/library", async (req, res, next) => {
@@ -112,6 +111,7 @@ libraryRoute.post("/library/folder/:parentFolderId", async (req, res) => {
 libraryRoute.delete("/library/folder/:parentFolderId", async (req, res) => {
   const folderId = Number(req.params.parentFolderId);
   const userId = Number(req.user.id);
+  //Todo: delete folder from supabase
   try {
     const deleteFolder = await prisma.folder.delete({
       where: {
