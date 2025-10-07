@@ -120,19 +120,41 @@ libraryRoute.delete("/library/folder/:parentFolderId", async (req, res) => {
   const folderId = Number(req.params.parentFolderId);
   const userId = Number(req.user.id);
   //Todo: delete folder from supabase
-  try {
-    const deleteFolder = await prisma.folder.delete({
-      where: {
-        id: folderId,
-        userId,
-      },
-    });
-
-    if (Object.keys(deleteFolder).length > 0) {
-      return res.status(200).end();
+  const folderPath = `${req.user.username}-${userId}/${folderId}`;
+  if (folderId) {
+    // folder has parent folder
+    const { data, error } = await supabase.storage
+      .from("file-uploads")
+      .list(folderPath);
+    const uploadedFileData = data;
+    if (error) {
+      console.error("Error when getting files in folder supabase", error);
+    } else {
+      const addPathToFiles = uploadedFileData.map(
+        (file) => `${folderPath}/${file.name}`
+      );
+      const { data, error } = await supabase.storage
+        .from("file-uploads")
+        .remove(addPathToFiles);
+      if (error) {
+        console.error("Error when deleting files in folder supabase", error);
+      } else {
+        // clear db record
+        try {
+          const deleteFolder = await prisma.folder.delete({
+            where: {
+              id: folderId,
+              userId,
+            },
+          });
+          if (Object.keys(deleteFolder).length > 0) {
+            return res.status(200).end();
+          }
+        } catch (error) {
+          console.error("Error on deleting folder", error);
+        }
+      }
     }
-  } catch (error) {
-    console.error("Error on deleting folder", error);
   }
 });
 // Edit folder name
