@@ -1,6 +1,8 @@
 const multer = require("multer");
 const { decode } = require("base64-arraybuffer");
 const { filesize } = require("filesize");
+const dayjs = require("dayjs");
+const relativeTime = require("dayjs/plugin/relativeTime");
 const prisma = require("../config/prismaClient");
 const { supabase } = require("../config/supabase");
 
@@ -32,11 +34,24 @@ const libraryRootPageGet = async (req, res, next) => {
       userId,
     },
   });
+  // format date in x time ago from now
+  dayjs.extend(relativeTime);
+  const formateFolderListDate = folderList.map((folder) => ({
+    ...folder,
+    createdAt: dayjs(folder.createdAt).fromNow(),
+    updatedAt: dayjs(folder.updatedAt).fromNow(),
+  }));
+  const formateFileListDate = fileList.map((file) => ({
+    ...file,
+    createdAt: dayjs(file.createdAt).fromNow(),
+    updatedAt: dayjs(file.updatedAt).fromNow(),
+  }));
   const folderData = {
     parentFolder: { id: null, name: null },
-    folderList,
-    fileList,
+    folderList: formateFolderListDate,
+    fileList: formateFileListDate,
   };
+
   return res.render("pages/library-page", { folderData });
 };
 
@@ -71,10 +86,23 @@ const librarySubfolderPageGet = async (req, res, next) => {
   });
   const parentFolderName = parentFolder.name;
 
+  // format date in x time ago from now
+  dayjs.extend(relativeTime);
+  const formateFolderListDate = folderList.map((folder) => ({
+    ...folder,
+    createdAt: dayjs(folder.createdAt).fromNow(),
+    updatedAt: dayjs(folder.updatedAt).fromNow(),
+  }));
+  const formateFileListDate = fileList.map((file) => ({
+    ...file,
+    createdAt: dayjs(file.createdAt).fromNow(),
+    updatedAt: dayjs(file.updatedAt).fromNow(),
+  }));
+
   const folderData = {
     parentFolder: { id: parentFolderId, name: parentFolderName },
-    folderList,
-    fileList,
+    folderList: formateFolderListDate,
+    fileList: formateFileListDate,
   };
 
   return res.render("pages/library-page", { folderData });

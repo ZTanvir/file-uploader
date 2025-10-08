@@ -98,12 +98,8 @@
                 >
               </td>
               <td></td>
-              <td class="created-row">
-                <%=`${new Date(folder.createdAt).toLocaleString()}` %>
-              </td>
-              <td class="updated-row">
-                <%=`${new Date(folder.updatedAt).toLocaleString()}` %>
-              </td>
+              <td class="created-row"><%=folder.createdAt %></td>
+              <td class="updated-row"><%=folder.updatedAt %></td>
               <td>
                 <div class="folder-options">
                   <span
@@ -152,12 +148,8 @@
                 >
               </td>
               <td><%=file.size%></td>
-              <td class="created-row">
-                <%=new Date(file.createdAt).toLocaleString()%>
-              </td>
-              <td class="updated-row">
-                <%=new Date(file.updatedAt).toLocaleString()%>
-              </td>
+              <td class="created-row"><%=file.createdAt%></td>
+              <td class="updated-row"><%=file.updatedAt%></td>
               <td>
                 <div class="file-options">
                   <span class="material-symbols-outlined open-file-options-btn">
