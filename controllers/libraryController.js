@@ -1,5 +1,6 @@
 const multer = require("multer");
 const { decode } = require("base64-arraybuffer");
+const { filesize } = require("filesize");
 const prisma = require("../config/prismaClient");
 const { supabase } = require("../config/supabase");
 
@@ -334,7 +335,7 @@ const libraryAddFilePost = (req, res, next) => {
     } else if (!req.file) {
       return res.status(400).json({ error: "Please upload a file" });
     }
-    const fileSize = `${(Number(req.file.size) * 0.001).toFixed(2)} KB`;
+    const fileSizes = filesize(req.file.size);
     const fileBase64 = decode(file.buffer.toString("base64"));
     const fileName = file.originalname;
 
@@ -355,7 +356,7 @@ const libraryAddFilePost = (req, res, next) => {
           const file = await prisma.file.create({
             data: {
               name: fileName,
-              size: fileSize,
+              size: fileSizes,
               path: fileDestination,
               userId: user?.id,
             },
@@ -370,7 +371,7 @@ const libraryAddFilePost = (req, res, next) => {
           const file = await prisma.file.create({
             data: {
               name: fileName,
-              size: fileSize,
+              size: fileSizes,
               path: fileDestination,
               parentFolderId: parentFolderId,
               userId: user?.id,
