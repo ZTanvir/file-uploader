@@ -46,5 +46,8 @@ app.get("/", (req, res) => {
 app.use("/", loginRoute);
 app.use("/", signupRoute);
 app.use("/", libraryRoute);
+app.use((req, res, next) => {
+  res.render("pages/not-found-page");
+});
 
 module.exports = app;

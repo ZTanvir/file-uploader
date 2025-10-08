@@ -12,6 +12,10 @@ html {
   --font-roboto: "Roboto";
   font-family: var(--font-roboto, sans-serif);
 }
+html,
+body {
+  height: 100%;
+}
 
 .navbar {
   background-color: var(--color-azul);
