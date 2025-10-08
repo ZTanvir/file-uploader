@@ -1,8 +1,8 @@
 const express = require("express");
 const libraryRoute = express.Router();
 const multer = require("multer");
-const prisma = require("../utils/prismaClient");
-const { supabase } = require("../utils/superbase");
+const prisma = require("../config/prismaClient");
+const { supabase } = require("../config/supabase");
 const { decode } = require("base64-arraybuffer");
 
 const storage = multer.memoryStorage();
