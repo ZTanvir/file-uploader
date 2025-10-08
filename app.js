@@ -1,8 +1,8 @@
 const express = require("express");
 const path = require("path");
-const loginRoute = require("./routes/login");
-const signupRoute = require("./routes/signup");
-const libraryRoute = require("./routes/library");
+const loginRoute = require("./routes/loginRouter");
+const signupRoute = require("./routes/signupRouter");
+const libraryRoute = require("./routes/libraryRouter");
 const expressSession = require("express-session");
 const passport = require("./config/passport");
 const { PrismaSessionStore } = require("@quixo3/prisma-session-store");

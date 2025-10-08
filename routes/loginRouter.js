@@ -1,7 +1,7 @@
 const express = require("express");
 const loginRoute = express.Router();
 const passport = require("passport");
-const prisma = require("../utils/prismaClient");
+const prisma = require("../config/prismaClient");
 const bcrypt = require("bcryptjs");
 const { body, validationResult } = require("express-validator");
 

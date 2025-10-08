@@ -2,7 +2,7 @@ const express = require("express");
 const signupRoute = express();
 const { body, validationResult } = require("express-validator");
 const bcryptjs = require("bcryptjs");
-const prisma = require("../utils/prismaClient");
+const prisma = require("../config/prismaClient");
 
 const signupValidationResult = [
   body("username")
