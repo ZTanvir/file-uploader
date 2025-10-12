@@ -5,6 +5,7 @@ const signupValidationResult = [
   body("username")
     .notEmpty()
     .withMessage("Please enter your username.")
+    .escape()
     .custom(async (value, { req }) => {
       const existingUser = await prisma.user.findMany({
         where: {
@@ -19,6 +20,7 @@ const signupValidationResult = [
   body("password")
     .notEmpty()
     .withMessage("Please enter your password.")
+    .escape()
     .isLength({ min: 10 })
     .withMessage("Password must be at least 10 digit long."),
 
