@@ -1,12 +1,13 @@
 const express = require("express");
 const path = require("path");
+const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
+const { PrismaClient } = require("@prisma/client");
+const morgan = require("morgan");
 const loginRoute = require("./routes/loginRouter");
 const signupRoute = require("./routes/signupRouter");
 const libraryRoute = require("./routes/libraryRouter");
 const expressSession = require("express-session");
 const passport = require("./config/passport");
-const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
-const { PrismaClient } = require("@prisma/client");
 require("dotenv").config();
 
 const app = express();
@@ -17,6 +18,7 @@ app.use("/public", express.static(path.join(__dirname, "public")));
 // body parser middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(morgan("tiny"));
 
 app.use(
   expressSession({
