@@ -4,6 +4,7 @@ const { filesize } = require("filesize");
 const dayjs = require("dayjs");
 const relativeTime = require("dayjs/plugin/relativeTime");
 const prisma = require("../config/prismaClient");
+const dbQuery = require("../db/query");
 const { supabase } = require("../config/supabase");
 
 const storage = multer.memoryStorage();
@@ -16,24 +17,20 @@ const upload = multer({
 const libraryRootPageGet = async (req, res, next) => {
   // get folder and file with parentFolder column null(Root folder)
   const userId = req.user?.id;
-  const folderList = await prisma.folder.findMany({
-    where: {
-      userId,
-      parentFolderId: null,
-    },
-  });
+  const folderList = await dbQuery.findFoldersByParentId(
+    userId,
+    (parentFolderId = null)
+  );
 
   if (!userId) {
     // when unregister user try to visit /library
     return res.redirect("/log-in");
   }
 
-  const fileList = await prisma.file.findMany({
-    where: {
-      parentFolderId: null,
-      userId,
-    },
-  });
+  const fileList = await dbQuery.findFilesByParentId(
+    userId,
+    (parentFolderId = null)
+  );
   // format date in x time ago from now
   dayjs.extend(relativeTime);
   const formateFolderListDate = folderList.map((folder) => ({
@@ -62,29 +59,15 @@ const librarySubfolderPageGet = async (req, res, next) => {
     // when unregister user try to visit /library
     return res.redirect("/log-in");
   }
-  const parentFolder = await prisma.folder.findFirst({
-    where: {
-      userId,
-      id: parentFolderId,
-    },
-    select: {
-      name: true,
-    },
-  });
+  const parentFolder = await dbQuery.findFolderById(userId, parentFolderId);
 
-  const folderList = await prisma.folder.findMany({
-    where: {
-      userId,
-      parentFolderId,
-    },
-  });
-  const fileList = await prisma.file.findMany({
-    where: {
-      parentFolderId,
-      userId,
-    },
-  });
-  const parentFolderName = parentFolder.name;
+  const folderList = await dbQuery.findFoldersByParentId(
+    userId,
+    parentFolderId
+  );
+
+  const fileList = await dbQuery.findFilesByParentId(userId, parentFolderId);
+  const parentFolderName = parentFolder?.name;
 
   // format date in x time ago from now
   dayjs.extend(relativeTime);

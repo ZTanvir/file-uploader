@@ -5,7 +5,6 @@
 }
 #library-page main {
   flex-grow: 1;
-  justify-content: center;
   padding: 1rem;
 }
 #library-page .library-header {

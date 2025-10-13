@@ -42,8 +42,54 @@ const createNewUser = async (username, password) => {
     );
   }
 };
+
+const findFoldersByParentId = async (userId, parentFolderId) => {
+  try {
+    const folderList = await prisma.folder.findMany({
+      where: {
+        userId,
+        parentFolderId,
+      },
+    });
+    return folderList;
+  } catch (error) {
+    console.error(`Error when getting folders of user ${userId}:`, error);
+  }
+};
+
+const findFilesByParentId = async (userId, parentFolderId) => {
+  try {
+    const folderList = await prisma.file.findMany({
+      where: {
+        userId,
+        parentFolderId,
+      },
+    });
+    return folderList;
+  } catch (error) {
+    console.error(`Error when getting files of user ${userId}:`, error);
+  }
+};
+
+const findFolderById = async (userId, folderId) => {
+  try {
+    const folderList = await prisma.folder.findFirst({
+      where: {
+        userId,
+        id: folderId,
+      },
+    });
+    return folderList;
+  } catch (error) {
+    console.error(`Error when getting folders of user ${userId}:`, error);
+  }
+};
+
 module.exports = {
   findUserByUserName,
   findUserByUserId,
   createNewUser,
+  findFoldersByParentId,
+  findFilesByParentId,
+  findFolderById,
 };
