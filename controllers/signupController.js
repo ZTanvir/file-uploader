@@ -1,18 +1,15 @@
 const { body, validationResult } = require("express-validator");
 const bcryptjs = require("bcryptjs");
 const prisma = require("../config/prismaClient");
+const dbQuery = require("../db/query");
+
 const signupValidationResult = [
   body("username")
     .notEmpty()
     .withMessage("Please enter your username.")
-    .escape()
     .custom(async (value, { req }) => {
-      const existingUser = await prisma.user.findMany({
-        where: {
-          username: req.body.username,
-        },
-      });
-      if (existingUser.length !== 0) {
+      const user = await dbQuery.findUserByUserName(req.body.username);
+      if (user?.id) {
         throw new Error("User already exists with this name.");
       }
     }),
@@ -22,7 +19,7 @@ const signupValidationResult = [
     .withMessage("Please enter your password.")
     .escape()
     .isLength({ min: 10 })
-    .withMessage("Password must be at least 10 digit long."),
+    .withMessage("Password must be at least 10 digits long."),
 
   body("confirmPassword").custom(async (value, { req }) => {
     if (req.body.password !== value) {
@@ -49,13 +46,11 @@ const signupPost = async (req, res) => {
   // when user input pass the validation
   const hashedPassword = await bcryptjs.hash(password, 10);
   try {
-    const newUser = await prisma.user.create({
-      data: {
-        username,
-        password: hashedPassword,
-      },
-    });
-    res.redirect("/log-in");
+    const newUser = await dbQuery.createNewUser(username, hashedPassword);
+    if (newUser?.id) {
+      // new register user added
+      res.redirect("/log-in");
+    }
   } catch (error) {
     console.log(error.message);
   }
