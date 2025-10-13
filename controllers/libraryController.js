@@ -100,29 +100,35 @@ const libraryAddFolderPost = async (req, res) => {
   const folderName = req.body.folderName;
 
   async function createFolder(parentFolderId, userId, folderName) {
-    try {
-      const folder = await prisma.folder.create({
-        data: {
-          name: folderName,
-          userId,
-          parentFolderId,
-        },
-      });
-    } catch (error) {
-      console.error("Error on creating new folder", error);
-    }
+    const folder = await dbQuery.createFolder(
+      folderName,
+      userId,
+      parentFolderId
+    );
+    return folder;
   }
 
   if (!parentFolderId) {
     // parent folder null means root folder
-    createFolder(parentFolderId, userId, folderName).then(() => {
+    const folder = await dbQuery.createFolder(
+      folderName,
+      userId,
+      parentFolderId
+    );
+    if (folder?.id) {
       return res.status(200).end();
-    });
+    }
   } else {
     // child folder
-    createFolder(parentFolderId, userId, folderName).then(() => {
+    const folder = await dbQuery.createFolder(
+      folderName,
+      userId,
+      parentFolderId
+    );
+
+    if (folder?.id) {
       return res.status(200).end();
-    });
+    }
   }
 };
 
@@ -144,12 +150,7 @@ const libraryDeleteFolderDelete = async (req, res) => {
       // not files in the supabase folder
       // clear db record
       try {
-        const deleteFolder = await prisma.folder.delete({
-          where: {
-            id: folderId,
-            userId,
-          },
-        });
+        const deleteFolder = await dbQuery.deleteFolder(folderId, userId);
         if (Object.keys(deleteFolder).length > 0) {
           return res.status(200).end();
         }
@@ -188,21 +189,15 @@ const libraryEditFolderPatch = async (req, res) => {
   const folderId = Number(req.params.parentFolderId);
   const userId = Number(req.user.id);
   const newFolderName = String(req.body.newFolderName);
-  try {
-    const updateFolder = await prisma.folder.update({
-      where: {
-        userId,
-        id: folderId,
-      },
-      data: {
-        name: newFolderName,
-      },
-    });
-    if (Object.keys(updateFolder).length > 0) {
-      return res.status(200).end();
-    }
-  } catch (error) {
-    console.error("Error on rename new folder:", error);
+
+  const updateFolder = await dbQuery.editFolder(
+    userId,
+    folderId,
+    newFolderName
+  );
+
+  if (Object.keys(updateFolder).length > 0) {
+    return res.status(200).end();
   }
 };
 

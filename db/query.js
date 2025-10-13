@@ -85,6 +85,52 @@ const findFolderById = async (userId, folderId) => {
   }
 };
 
+const createFolder = async (folderName, userId, parentFolderId) => {
+  try {
+    const folder = await prisma.folder.create({
+      data: {
+        name: folderName,
+        userId,
+        parentFolderId,
+      },
+    });
+    return folder;
+  } catch (error) {
+    console.error(`Error when creating new folders:`, error);
+  }
+};
+
+const deleteFolder = async (folderId, userId) => {
+  try {
+    const deleteFolder = await prisma.folder.delete({
+      where: {
+        id: folderId,
+        userId,
+      },
+    });
+    return deleteFolder;
+  } catch (error) {
+    console.error(`Error when deleting folders:`, error);
+  }
+};
+
+const editFolder = async (userId, folderId, newFolderName) => {
+  try {
+    const editFolder = await prisma.folder.update({
+      where: {
+        userId,
+        id: folderId,
+      },
+      data: {
+        name: newFolderName,
+      },
+    });
+    return editFolder;
+  } catch (error) {
+    console.error(`Error when editing folders name:`, error);
+  }
+};
+
 module.exports = {
   findUserByUserName,
   findUserByUserId,
@@ -92,4 +138,7 @@ module.exports = {
   findFoldersByParentId,
   findFilesByParentId,
   findFolderById,
+  createFolder,
+  deleteFolder,
+  editFolder,
 };
