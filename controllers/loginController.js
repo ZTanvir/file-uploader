@@ -1,35 +1,33 @@
 const passport = require("passport");
-const prisma = require("../config/prismaClient");
 const bcrypt = require("bcryptjs");
+const dbQuery = require("../db/query");
 const { body, validationResult } = require("express-validator");
 
 const signinValidationResult = [
   body("username")
     .notEmpty()
     .withMessage("Please enter your username.")
-    .custom(async (value) => {
-      const user = await prisma.user.findFirst({
-        where: {
-          username: value,
-        },
-      });
-      if (!user) {
-        throw new Error("Incorrect username.");
+    .custom(async (value, { req }) => {
+      if (Boolean(value)) {
+        // user typed something
+        const user = await dbQuery.findUserByUserName(req.body.username);
+        if (!user) {
+          throw new Error("Username not found.");
+        }
       }
     }),
   body("password")
     .notEmpty()
     .withMessage("Please enter your password.")
     .custom(async (value, { req }) => {
-      const user = await prisma.user.findFirst({
-        where: {
-          username: req.body.username,
-        },
-      });
-      if (user) {
-        const match = await bcrypt.compare(value, user.password);
-        if (!match) {
-          throw new Error("Incorrect password.");
+      if (Boolean(value)) {
+        // user typed something
+        const user = await dbQuery.findUserByUserName(req.body.username);
+        if (user) {
+          const match = await bcrypt.compare(value, user.password);
+          if (!match) {
+            throw new Error("Incorrect password.");
+          }
         }
       }
     }),
