@@ -169,12 +169,7 @@ const libraryDeleteFolderDelete = async (req, res) => {
       } else {
         // clear db record
         try {
-          const deleteFolder = await prisma.folder.delete({
-            where: {
-              id: folderId,
-              userId,
-            },
-          });
+          const deleteFolder = await dbQuery.deleteFolder(folderId, userId);
           if (Object.keys(deleteFolder).length > 0) {
             return res.status(200).end();
           }
