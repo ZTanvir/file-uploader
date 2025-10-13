@@ -131,6 +131,97 @@ const editFolder = async (userId, folderId, newFolderName) => {
   }
 };
 
+const getFilePathById = async (fileId, userId) => {
+  try {
+    const { path } = await prisma.file.findFirst({
+      where: {
+        id: fileId,
+        userId,
+      },
+      select: {
+        path: true,
+      },
+    });
+    return path;
+  } catch (error) {
+    console.error(`Error when getting file path:`, error);
+  }
+};
+
+const deleteFile = async (fileId, userId) => {
+  try {
+    const deleteFile = await prisma.file.delete({
+      where: {
+        id: fileId,
+        userId,
+      },
+    });
+    return deleteFile;
+  } catch (error) {
+    console.error(`Error when deleting file :`, error);
+  }
+};
+
+const findFileById = async (fileId, userId) => {
+  try {
+    const file = prisma.file.findFirst({
+      where: {
+        userId,
+        id: fileId,
+      },
+    });
+    return file;
+  } catch (error) {
+    console.error(`Error when finding file :`, error);
+  }
+};
+
+const updateFileByNameAndPath = async (
+  fileId,
+  userId,
+  newFileName,
+  newFilePath
+) => {
+  try {
+    const updateFile = await prisma.file.update({
+      where: {
+        userId,
+        id: fileId,
+      },
+      data: {
+        name: newFileName,
+        path: newFilePath,
+      },
+    });
+    return updateFile;
+  } catch (error) {
+    console.error(`Error when updating file name and path:`, error);
+  }
+};
+
+const createFile = async (
+  fileName,
+  fileSizes,
+  fileDestination,
+  parentFolderId,
+  userId
+) => {
+  try {
+    const file = await prisma.file.create({
+      data: {
+        name: fileName,
+        size: fileSizes,
+        path: fileDestination,
+        parentFolderId: parentFolderId,
+        userId: userId,
+      },
+    });
+    return file;
+  } catch (error) {
+    console.error(`Error when creating new file :`, error);
+  }
+};
+
 module.exports = {
   findUserByUserName,
   findUserByUserId,
@@ -141,4 +232,9 @@ module.exports = {
   createFolder,
   deleteFolder,
   editFolder,
+  getFilePathById,
+  deleteFile,
+  findFileById,
+  updateFileByNameAndPath,
+  createFile,
 };

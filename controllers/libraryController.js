@@ -200,21 +200,12 @@ const libraryEditFolderPatch = async (req, res) => {
     return res.status(200).end();
   }
 };
-
 const libraryDeleteFileDelete = async (req, res) => {
   const fileId = Number(req.params.fileId);
   const userId = Number(req.user.id);
 
   // get file path
-  const { path } = await prisma.file.findFirst({
-    where: {
-      id: fileId,
-      userId,
-    },
-    select: {
-      path: true,
-    },
-  });
+  const { path } = await dbQuery.getFilePathById(fileId, userId);
   // delete file from supabase
   const { data, error } = await supabase.storage
     .from("file-uploads")
@@ -223,19 +214,10 @@ const libraryDeleteFileDelete = async (req, res) => {
     console.log("Error on deleting file from supabase", error);
   } else {
     // delete file log from db
-    try {
-      const deleteFile = await prisma.file.delete({
-        where: {
-          id: fileId,
-          userId,
-        },
-      });
+    const deleteFile = await dbQuery.deleteFile(fileId, userId);
 
-      if (Object.keys(deleteFile).length > 0) {
-        return res.status(200).end();
-      }
-    } catch (error) {
-      console.error("Error on deleting folder", error);
+    if (Object.keys(deleteFile).length > 0) {
+      return res.status(200).end();
     }
   }
 };
@@ -247,20 +229,10 @@ const libraryEditFilePatch = async (req, res) => {
   const userId = Number(user.id);
   const newFileName = String(req.body.newFileName);
   // get file path from db
-  let fileData = null;
-  try {
-    const fileDetails = await prisma.file.findFirst({
-      where: {
-        userId,
-        id: fileId,
-      },
-    });
-    fileData = fileDetails;
-  } catch (error) {
-    console.error("Could not find the file in db on download request", error);
-  }
+  const fileData = await dbQuery.findFileById(fileId, userId);
+
   // rename the path in supabase
-  if (fileData !== null) {
+  if (fileData?.id) {
     const newFilePath = `${userName}-${userId}/${fileData.parentFolderId}/${newFileName}`;
     const { data, error } = await supabase.storage
       .from("file-uploads")
@@ -269,22 +241,14 @@ const libraryEditFilePatch = async (req, res) => {
       console.error("Error when rename file ", error);
     } else {
       // update the path in db
-      try {
-        const updateFile = await prisma.file.update({
-          where: {
-            userId,
-            id: fileId,
-          },
-          data: {
-            name: newFileName,
-            path: newFilePath,
-          },
-        });
-        if (Object.keys(updateFile).length > 0) {
-          return res.status(200).end();
-        }
-      } catch (error) {
-        console.error("Error on rename new folder:", error);
+      const updateFile = await dbQuery.updateFileByNameAndPath(
+        fileId,
+        userId,
+        newFileName,
+        newFilePath
+      );
+      if (Object.keys(updateFile).length > 0) {
+        return res.status(200).end();
       }
     }
   }
@@ -293,12 +257,8 @@ const libraryEditFilePatch = async (req, res) => {
 const libraryDownloadFileGet = async (req, res) => {
   const fileId = Number(req.params.fileId);
   const userId = Number(req.user.id);
-  const fileData = await prisma.file.findFirst({
-    where: {
-      userId,
-      id: fileId,
-    },
-  });
+  const fileData = await dbQuery.findFileById(fileId, userId);
+
   const { path } = fileData;
   const { data, error } = supabase.storage
     .from("file-uploads")
@@ -318,12 +278,7 @@ const libraryDownloadFileGet = async (req, res) => {
 const libraryFileDetailsGet = async (req, res) => {
   const fileId = Number(req.params.fileId);
   const userId = Number(req.user.id);
-  const file = await prisma.file.findFirst({
-    where: {
-      id: fileId,
-      userId,
-    },
-  });
+  const file = await dbQuery.findFileById(fileId, userId);
   return res.render("pages/file-details-page", { file });
 };
 const libraryAddFilePost = (req, res, next) => {
@@ -332,6 +287,7 @@ const libraryAddFilePost = (req, res, next) => {
       ? null
       : Number(req.params.parentFolderId);
   const user = req.user;
+  const userId = req.user.id;
 
   upload(req, res, async (err) => {
     const file = req.file;
@@ -358,31 +314,25 @@ const libraryAddFilePost = (req, res, next) => {
     } else {
       if (!parentFolderId) {
         // when parent folder null means in the root folder
-        try {
-          const file = await prisma.file.create({
-            data: {
-              name: fileName,
-              size: fileSizes,
-              path: fileDestination,
-              userId: user?.id,
-            },
-          });
-        } catch (error) {
-          console.error(`Error when adding file to root folder`, error);
-        }
+        const file = await dbQuery.createFile(
+          fileName,
+          fileSizes,
+          fileDestination,
+          parentFolderId,
+          userId
+        );
+
         return res.status(200).json({ message: "File upload successfully" });
       } else {
         // when parent folder has id means it has parent folder
         try {
-          const file = await prisma.file.create({
-            data: {
-              name: fileName,
-              size: fileSizes,
-              path: fileDestination,
-              parentFolderId: parentFolderId,
-              userId: user?.id,
-            },
-          });
+          const file = await dbQuery.createFile(
+            fileName,
+            fileSizes,
+            fileDestination,
+            parentFolderId,
+            userId
+          );
           return res.status(200).json({ message: "File upload successfully" });
         } catch (error) {
           console.error(
