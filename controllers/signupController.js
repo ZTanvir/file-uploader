@@ -51,7 +51,7 @@ const signupPost = async (req, res) => {
       res.redirect("/log-in");
     }
   } catch (error) {
-    console.log(error.message);
+    console.error(error.message);
   }
 };
 

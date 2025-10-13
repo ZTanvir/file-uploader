@@ -3,7 +3,6 @@ const { decode } = require("base64-arraybuffer");
 const { filesize } = require("filesize");
 const dayjs = require("dayjs");
 const relativeTime = require("dayjs/plugin/relativeTime");
-const prisma = require("../config/prismaClient");
 const dbQuery = require("../db/query");
 const { supabase } = require("../config/supabase");
 
@@ -206,7 +205,7 @@ const libraryDeleteFileDelete = async (req, res) => {
     .from("file-uploads")
     .remove([`${path}`]);
   if (error) {
-    console.log("Error on deleting file from supabase", error);
+    console.error("Error on deleting file from supabase", error);
   } else {
     // delete file log from db
     const deleteFile = await dbQuery.deleteFile(fileId, userId);
