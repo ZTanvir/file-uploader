@@ -41,8 +41,11 @@ const logInGet = (req, res) => {
 };
 
 const logInPost = async (req, res, next) => {
+  console.log("I am in login post route");
   const username = req.body.username;
   const password = req.body.password;
+  console.log("user", username, password);
+
   // validate username,password,confirm password
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -52,6 +55,28 @@ const logInPost = async (req, res, next) => {
     });
   }
   next();
+};
+
+const logInDemoUser = async (req, res, next) => {
+  const username = "demo user";
+  const password = await bcrypt.hash("12345612345", 10);
+  let demoUser = undefined;
+
+  // check in db that is there any user with name demo-user
+  const checkDemoUserInDb = await dbQuery.findUserByUserName(username);
+  if (checkDemoUserInDb === null) {
+    // register demo user
+    const newUser = await dbQuery.createNewUser(username, password);
+    demoUser = newUser;
+  } else {
+    // demo user already registered
+    demoUser = checkDemoUserInDb;
+  }
+
+  req.login(demoUser, (err) => {
+    if (err) return next(err);
+    res.redirect("/");
+  });
 };
 
 const passportAuthenticate = passport.authenticate("local", {
@@ -72,6 +97,7 @@ module.exports = {
   logInGet,
   signinValidationResult,
   logInPost,
+  logInDemoUser,
   passportAuthenticate,
   logOutGet,
 };

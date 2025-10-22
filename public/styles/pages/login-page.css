@@ -28,6 +28,20 @@
   cursor: pointer;
   background-color: var(--color-azul-dark);
 }
+#login-page .loginDemoUserBtn {
+  background-color: var(--color-light-green);
+  color: var(--color-white);
+  padding: 0.5rem 0.75rem;
+  border: none;
+  border-radius: 0.5rem;
+  display: block;
+  text-decoration: none;
+}
+#login-page .loginDemoUserBtn:hover {
+  cursor: pointer;
+  background-color: var(--color-green);
+}
+
 #login-page .error-msg {
   color: var(--color-red);
 }

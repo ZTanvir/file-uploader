@@ -4,6 +4,8 @@ const loginController = require("../controllers/loginController");
 
 loginRoute.get("/log-in", loginController.logInGet);
 
+loginRoute.get("/log-in/demo", loginController.logInDemoUser);
+
 loginRoute.post(
   "/log-in",
   loginController.signinValidationResult,

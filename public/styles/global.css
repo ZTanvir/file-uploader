@@ -9,6 +9,7 @@ html {
   --color-quill-gray: #d1d5db;
   --color-red: rgb(221, 25, 25);
   --color-green: green;
+  --color-light-green: rgb(49, 143, 49);
   --font-roboto: "Roboto";
   font-family: var(--font-roboto, sans-serif);
 }

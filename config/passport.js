@@ -2,9 +2,13 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const bcrypt = require("bcryptjs");
 const dbQuery = require("../db/query");
+const demoUser = { id: 1000, username: "demo", password: "demo123" };
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
+    if (username === demoUser.username && password === demoUser.password) {
+      return done(null, demoUser);
+    }
     try {
       const user = await dbQuery.findUserByUserName(username);
       if (!user) {
@@ -27,11 +31,15 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await dbQuery.findUserByUserId(id);
-    done(null, user);
-  } catch (err) {
-    done(err);
+  if (id === demoUser.id) {
+    done(null, demoUser);
+  } else {
+    try {
+      const user = await dbQuery.findUserByUserId(id);
+      done(null, user);
+    } catch (err) {
+      done(err);
+    }
   }
 });
 

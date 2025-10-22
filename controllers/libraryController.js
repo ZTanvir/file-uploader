@@ -199,7 +199,7 @@ const libraryDeleteFileDelete = async (req, res) => {
   const userId = Number(req.user.id);
 
   // get file path
-  const { path } = await dbQuery.getFilePathById(fileId, userId);
+  const path = await dbQuery.getFilePathById(fileId, userId);
   // delete file from supabase
   const { data, error } = await supabase.storage
     .from("file-uploads")
