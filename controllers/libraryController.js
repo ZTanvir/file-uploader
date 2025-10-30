@@ -330,13 +330,19 @@ const libraryAddFilePost = (req, res, next) => {
       // find all parent folders
       const allParents = await dbQuery.getParentFolders(parentFolderId);
 
-      const parentFolderPath = allParents
-        .map((folder) => folder.name)
-        .reverse()
-        .join("/");
+      let parentFolderPath = null;
+
+      if (allParents.length === 0) {
+        const folder = await dbQuery.findFolderById(userId, parentFolderId);
+        parentFolderPath = folder?.name;
+      } else {
+        parentFolderPath = allParents
+          .map((folder) => folder.name)
+          .reverse()
+          .join("/");
+      }
 
       const filePathSupabase = `${parentFolderSupabase}/${parentFolderPath}/${fileName}`;
-
       const { data, error } = await supabase.storage
         .from("file-uploads")
         .upload(filePathSupabase, fileBase64);

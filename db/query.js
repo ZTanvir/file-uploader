@@ -230,7 +230,9 @@ const getParentFolders = async (parentFolderId) => {
   if (!folder || !folder.parentFolder) {
     return [];
   }
+
   const parents = await getParentFolders(folder.parentFolder.id);
+
   return [folder.parentFolder, ...parents];
 };
 
