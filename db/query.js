@@ -221,6 +221,18 @@ const createFile = async (
     console.error(`Error when creating new file :`, error);
   }
 };
+const getParentFolders = async (parentFolderId) => {
+  const folder = await prisma.folder.findUnique({
+    where: { id: parentFolderId },
+    include: { parentFolder: true },
+  });
+
+  if (!folder || !folder.parentFolder) {
+    return [];
+  }
+  const parents = await getParentFolders(folder.parentFolder.id);
+  return [folder.parentFolder, ...parents];
+};
 
 module.exports = {
   findUserByUserName,
@@ -237,4 +249,5 @@ module.exports = {
   findFileById,
   updateFileByNameAndPath,
   createFile,
+  getParentFolders,
 };

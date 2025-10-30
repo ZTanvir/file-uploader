@@ -135,48 +135,54 @@ const libraryDeleteFolderDelete = async (req, res) => {
   const folderId = Number(req.params.parentFolderId);
   const userId = Number(req.user.id);
   //Todo: delete folder from supabase
-  const folderPath = `${req.user.username}-${userId}/${folderId}`;
+  // const folderPath = `${req.user.username}-${userId}/${folderId}`;
+  const folderPath = `${req.user.username}-${userId}/`;
+
   if (folderId) {
     // folder has parent folder
     const { data, error } = await supabase.storage
       .from("file-uploads")
-      .list(folderPath);
+      .list(folderPath, {
+        limit: 1000,
+        search: "",
+      });
     const uploadedFileData = data;
+    console.log("file and folder list", data);
 
-    if (error) {
-      console.error("Error when getting files in folder supabase", error);
-    } else if (uploadedFileData.length === 0) {
-      // not files in the supabase folder
-      // clear db record
-      try {
-        const deleteFolder = await dbQuery.deleteFolder(folderId, userId);
-        if (Object.keys(deleteFolder).length > 0) {
-          return res.status(200).end();
-        }
-      } catch (error) {
-        console.error("Error on deleting folder", error);
-      }
-    } else {
-      const addPathToFiles = uploadedFileData.map(
-        (file) => `${folderPath}/${file.name}`
-      );
-      const { data, error } = await supabase.storage
-        .from("file-uploads")
-        .remove(addPathToFiles);
-      if (error) {
-        console.error("Error when deleting files in folder supabase", error);
-      } else {
-        // clear db record
-        try {
-          const deleteFolder = await dbQuery.deleteFolder(folderId, userId);
-          if (Object.keys(deleteFolder).length > 0) {
-            return res.status(200).end();
-          }
-        } catch (error) {
-          console.error("Error on deleting folder", error);
-        }
-      }
-    }
+    // if (error) {
+    //   console.error("Error when getting files in folder supabase", error);
+    // } else if (uploadedFileData.length === 0) {
+    //   // not files in the supabase folder
+    //   // clear db record
+    //   try {
+    //     const deleteFolder = await dbQuery.deleteFolder(folderId, userId);
+    //     if (Object.keys(deleteFolder).length > 0) {
+    //       return res.status(200).end();
+    //     }
+    //   } catch (error) {
+    //     console.error("Error on deleting folder", error);
+    //   }
+    // } else {
+    //   const addPathToFiles = uploadedFileData.map(
+    //     (file) => `${folderPath}/${file.name}`
+    //   );
+    //   const { data, error } = await supabase.storage
+    //     .from("file-uploads")
+    //     .remove(addPathToFiles);
+    //   if (error) {
+    //     console.error("Error when deleting files in folder supabase", error);
+    //   } else {
+    //     // clear db record
+    //     try {
+    //       const deleteFolder = await dbQuery.deleteFolder(folderId, userId);
+    //       if (Object.keys(deleteFolder).length > 0) {
+    //         return res.status(200).end();
+    //       }
+    //     } catch (error) {
+    //       console.error("Error on deleting folder", error);
+    //     }
+    //   }
+    // }
   }
 };
 const libraryEditFolderPatch = async (req, res) => {
@@ -296,18 +302,19 @@ const libraryAddFilePost = (req, res, next) => {
     const fileName = file.originalname;
 
     // file with same name will not store in same folder
-    // store by userName/folder/file
-    const filePathSupabase = `${user.username}-${user.id}/${parentFolderId}/${fileName}`;
-    // upload file to supabase
-    const { data, error } = await supabase.storage
-      .from("file-uploads")
-      .upload(`${filePathSupabase}`, fileBase64);
-    const fileDestination = data?.path;
-    if (error) {
-      return res.status(400).json({ error: error.message });
-    } else {
-      if (!parentFolderId) {
-        // when parent folder null means in the root folder
+    // store by supabaseBucketName/userName
+    const parentFolderSupabase = `${user.username}-${user.id}`;
+
+    // when parent folder null means in the root folder
+    if (!parentFolderId) {
+      const filePathSupabase = `${parentFolderSupabase}/${fileName}`;
+      const { data, error } = await supabase.storage
+        .from("file-uploads")
+        .upload(filePathSupabase, fileBase64);
+      if (error) {
+        return res.status(400).json({ error: error.message });
+      } else {
+        const fileDestination = data?.path;
         const file = await dbQuery.createFile(
           fileName,
           fileSizes,
@@ -317,23 +324,35 @@ const libraryAddFilePost = (req, res, next) => {
         );
 
         return res.status(200).json({ message: "File upload successfully" });
+      }
+    } else {
+      // when parent folder has id means it has parent folder
+      // find all parent folders
+      const allParents = await dbQuery.getParentFolders(parentFolderId);
+
+      const parentFolderPath = allParents
+        .map((folder) => folder.name)
+        .reverse()
+        .join("/");
+
+      const filePathSupabase = `${parentFolderSupabase}/${parentFolderPath}/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from("file-uploads")
+        .upload(filePathSupabase, fileBase64);
+      if (error) {
+        return res.status(400).json({ error: error.message });
       } else {
-        // when parent folder has id means it has parent folder
-        try {
-          const file = await dbQuery.createFile(
-            fileName,
-            fileSizes,
-            fileDestination,
-            parentFolderId,
-            userId
-          );
-          return res.status(200).json({ message: "File upload successfully" });
-        } catch (error) {
-          console.error(
-            `Error when adding file to a  subfolder with id ${parentFolderId}`,
-            error
-          );
-        }
+        const fileDestination = data?.path;
+
+        const file = await dbQuery.createFile(
+          fileName,
+          fileSizes,
+          fileDestination,
+          parentFolderId,
+          userId
+        );
+        return res.status(200).json({ message: "File upload successfully" });
       }
     }
   });
