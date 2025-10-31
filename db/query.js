@@ -43,6 +43,21 @@ const createNewUser = async (username, password) => {
   }
 };
 
+const getParentFolders = async (parentFolderId, userId) => {
+  const folder = await prisma.folder.findUnique({
+    where: { id: parentFolderId, userId },
+    include: { parentFolder: true },
+  });
+
+  if (!folder || !folder.parentFolder) {
+    return [];
+  }
+
+  const parents = await getParentFolders(folder.parentFolder.id);
+
+  return [folder.parentFolder, ...parents];
+};
+
 const findFoldersByParentId = async (userId, parentFolderId) => {
   try {
     const folderList = await prisma.folder.findMany({
@@ -54,20 +69,6 @@ const findFoldersByParentId = async (userId, parentFolderId) => {
     return folderList;
   } catch (error) {
     console.error(`Error when getting folders of user ${userId}:`, error);
-  }
-};
-
-const findFilesByParentId = async (userId, parentFolderId) => {
-  try {
-    const folderList = await prisma.file.findMany({
-      where: {
-        userId,
-        parentFolderId,
-      },
-    });
-    return folderList;
-  } catch (error) {
-    console.error(`Error when getting files of user ${userId}:`, error);
   }
 };
 
@@ -128,6 +129,20 @@ const editFolder = async (userId, folderId, newFolderName) => {
     return editFolder;
   } catch (error) {
     console.error(`Error when editing folders name:`, error);
+  }
+};
+
+const findFilesByParentId = async (userId, parentFolderId) => {
+  try {
+    const folderList = await prisma.file.findMany({
+      where: {
+        userId,
+        parentFolderId,
+      },
+    });
+    return folderList;
+  } catch (error) {
+    console.error(`Error when getting files of user ${userId}:`, error);
   }
 };
 
@@ -220,20 +235,6 @@ const createFile = async (
   } catch (error) {
     console.error(`Error when creating new file :`, error);
   }
-};
-const getParentFolders = async (parentFolderId) => {
-  const folder = await prisma.folder.findUnique({
-    where: { id: parentFolderId },
-    include: { parentFolder: true },
-  });
-
-  if (!folder || !folder.parentFolder) {
-    return [];
-  }
-
-  const parents = await getParentFolders(folder.parentFolder.id);
-
-  return [folder.parentFolder, ...parents];
 };
 
 module.exports = {
