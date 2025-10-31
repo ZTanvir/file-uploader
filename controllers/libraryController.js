@@ -225,18 +225,21 @@ const libraryDeleteFileDelete = async (req, res) => {
 const libraryEditFilePatch = async (req, res) => {
   const fileId = Number(req.params.fileId);
   const user = req.user;
-  const userName = user.username;
   const userId = Number(user.id);
   const newFileName = String(req.body.newFileName);
   // get file path from db
   const fileData = await dbQuery.findFileById(fileId, userId);
-
+  console.log("File data", fileData);
   // rename the path in supabase
   if (fileData?.id) {
-    const newFilePath = `${userName}-${userId}/${fileData.parentFolderId}/${newFileName}`;
+    const splitPath = fileData.path.split("/");
+    const updatedPath = `${splitPath
+      .slice(0, splitPath.length - 1)
+      .join("/")}/${newFileName}`;
+
     const { data, error } = await supabase.storage
       .from("file-uploads")
-      .move(`${fileData.path}`, `${newFilePath}`);
+      .move(`${fileData.path}`, `${updatedPath}`);
     if (error) {
       console.error("Error when rename file ", error);
     } else {
@@ -245,7 +248,7 @@ const libraryEditFilePatch = async (req, res) => {
         fileId,
         userId,
         newFileName,
-        newFilePath
+        updatedPath
       );
       if (Object.keys(updateFile).length > 0) {
         return res.status(200).end();
