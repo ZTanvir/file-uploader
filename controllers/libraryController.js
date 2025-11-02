@@ -16,7 +16,7 @@ const upload = multer({
 const libraryRootPageGet = async (req, res, next) => {
   // get folder and file with parentFolder column null(Root folder)
   const userId = req.user?.id;
-  const folderList = await dbQuery.findFoldersByParentId(
+  const folderList = await dbQuery.getFoldersByParentId(
     userId,
     (parentFolderId = null)
   );
@@ -60,10 +60,7 @@ const librarySubfolderPageGet = async (req, res, next) => {
   }
   const parentFolder = await dbQuery.findFolderById(userId, parentFolderId);
 
-  const folderList = await dbQuery.findFoldersByParentId(
-    userId,
-    parentFolderId
-  );
+  const folderList = await dbQuery.getFoldersByParentId(userId, parentFolderId);
 
   const fileList = await dbQuery.findFilesByParentId(userId, parentFolderId);
   const parentFolderName = parentFolder?.name;
@@ -190,14 +187,93 @@ const libraryEditFolderPatch = async (req, res) => {
   const folderId = Number(req.params.parentFolderId);
   const userId = Number(req.user.id);
   const newFolderName = String(req.body.newFolderName);
+  let isFolderUpdated = true;
 
-  const updateFolder = await dbQuery.editFolder(
+  const folder = await dbQuery.findFolderById(userId, folderId);
+  // change the folder name in path
+  const folderPath = folder.path.split("/").slice(0, -1);
+  const updatedPath = folderPath.concat(newFolderName).join("/");
+  const editedFolder = await dbQuery.editFolder(
     userId,
     folderId,
-    newFolderName
+    newFolderName,
+    updatedPath
+  );
+  const filesInFolder = await dbQuery.findFilesByParentId(
+    userId,
+    editedFolder.id
   );
 
-  if (Object.keys(updateFolder).length > 0) {
+  for (const file of filesInFolder) {
+    // update file path , so user can delete,download and edit file from supabase
+    const newPath = `${editedFolder.path}/${file.name}`;
+    const updatedFileInFolder = await dbQuery.updateFileByNameAndPath(
+      file.id,
+      userId,
+      file.name,
+      newPath
+    );
+
+    const { data, error } = await supabase.storage
+      .from("file-uploads")
+      .move(`${file.path}`, `${updatedFileInFolder.path}`);
+    if (error) {
+      isFolderUpdated = false;
+      console.error("Error on moving file from one folder to another", error);
+      return res.status(500).end();
+    }
+  }
+
+  // get all child folders in a folder
+  const allNestedFolders = await dbQuery.getAllChildFolders(folderId, userId);
+
+  // update child folder path
+  for (const folder of allNestedFolders) {
+    const parentFolder = await dbQuery.getParentFolder(
+      folder.parentFolderId,
+      userId
+    );
+    const parentFolderPath = parentFolder.path;
+    const newPath = `${parentFolderPath}/${folder.name}`;
+    // update folder path
+    const updatedFolder = await dbQuery.editFolder(
+      userId,
+      folder.id,
+      folder.name,
+      newPath
+    );
+  }
+  const updatedNestedFolders = await dbQuery.getAllChildFolders(
+    folderId,
+    userId
+  );
+
+  // get child file of each child folder
+  // update child files path
+  for (const folder of updatedNestedFolders) {
+    const files = await dbQuery.findFilesByParentId(userId, folder.id);
+    for (const file of files) {
+      const newPath = `${folder.path}/${file.name}`;
+      const updatedFileInFolder = await dbQuery.updateFileByNameAndPath(
+        file.id,
+        userId,
+        file.name,
+        newPath
+      );
+
+      const { data, error } = await supabase.storage
+        .from("file-uploads")
+        .move(`${file.path}`, `${updatedFileInFolder.path}`);
+
+      if (error) {
+        isFolderUpdated = false;
+        console.error("Error on moving file from one folder to another", error);
+        return res.status(500).end();
+      }
+    }
+  }
+
+  if (isFolderUpdated) {
     return res.status(200).end();
   }
 };

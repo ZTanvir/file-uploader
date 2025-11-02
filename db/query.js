@@ -58,8 +58,34 @@ const getParentFolders = async (parentFolderId, userId) => {
 
   return [folder.parentFolder, ...parents];
 };
+const getParentFolder = async (parentFolderId, userId) => {
+  try {
+    const folder = await prisma.folder.findUnique({
+      where: { id: parentFolderId, userId },
+      include: { parentFolder: true },
+    });
+    return folder;
+  } catch (error) {
+    console.error("Error on getting parent folder data:", error);
+  }
+};
 
-const findFoldersByParentId = async (userId, parentFolderId) => {
+const getAllChildFolders = async (folderId, userId) => {
+  const children = await prisma.folder.findMany({
+    where: { parentFolderId: folderId, userId },
+    include: { childFolder: true },
+  });
+
+  let all = [...children];
+  for (const child of children) {
+    const descendants = await getAllChildFolders(child.id, userId);
+    all = [...all, ...descendants];
+  }
+
+  return all;
+};
+
+const getFoldersByParentId = async (userId, parentFolderId) => {
   try {
     const folderList = await prisma.folder.findMany({
       where: {
@@ -117,7 +143,7 @@ const deleteFolder = async (folderId, userId) => {
   }
 };
 
-const editFolder = async (userId, folderId, newFolderName) => {
+const editFolder = async (userId, folderId, newFolderName, updatedPath) => {
   try {
     const editFolder = await prisma.folder.update({
       where: {
@@ -126,6 +152,7 @@ const editFolder = async (userId, folderId, newFolderName) => {
       },
       data: {
         name: newFolderName,
+        path: updatedPath,
       },
     });
     return editFolder;
@@ -136,13 +163,27 @@ const editFolder = async (userId, folderId, newFolderName) => {
 
 const findFilesByParentId = async (userId, parentFolderId) => {
   try {
-    const folderList = await prisma.file.findMany({
+    const files = await prisma.file.findMany({
       where: {
         userId,
         parentFolderId,
       },
     });
-    return folderList;
+    return files;
+  } catch (error) {
+    console.error(`Error when getting files of user ${userId}:`, error);
+  }
+};
+
+const getFileByParentId = async (userId, parentFolderId) => {
+  try {
+    const file = await prisma.file.findFirst({
+      where: {
+        userId,
+        parentFolderId,
+      },
+    });
+    return file;
   } catch (error) {
     console.error(`Error when getting files of user ${userId}:`, error);
   }
@@ -243,15 +284,18 @@ module.exports = {
   findUserByUserName,
   findUserByUserId,
   createNewUser,
-  findFoldersByParentId,
+  getFoldersByParentId,
+  getParentFolder,
   findFilesByParentId,
   findFolderById,
+  getAllChildFolders,
   createFolder,
   deleteFolder,
   editFolder,
   getFilePathById,
   deleteFile,
   findFileById,
+  getFileByParentId,
   updateFileByNameAndPath,
   createFile,
   getParentFolders,
