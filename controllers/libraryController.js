@@ -132,55 +132,54 @@ const libraryAddFolderPost = async (req, res) => {
 const libraryDeleteFolderDelete = async (req, res) => {
   const folderId = Number(req.params.parentFolderId);
   const userId = Number(req.user.id);
-  //Todo: delete folder from supabase
-  // const folderPath = `${req.user.username}-${userId}/${folderId}`;
-  const folderPath = `${req.user.username}-${userId}/`;
+  let isFileDeleted = true;
+  // get files in the folder
+  const filesInFolder = await dbQuery.findFilesByParentId(userId, folderId);
 
-  if (folderId) {
-    // folder has parent folder
+  for (const file of filesInFolder) {
+    // delete files from supabase
     const { data, error } = await supabase.storage
       .from("file-uploads")
-      .list(folderPath, {
-        limit: 1000,
-        search: "",
-      });
-    const uploadedFileData = data;
-    console.log("file and folder list", data);
+      .remove([`${file.path}`]);
 
-    // if (error) {
-    //   console.error("Error when getting files in folder supabase", error);
-    // } else if (uploadedFileData.length === 0) {
-    //   // not files in the supabase folder
-    //   // clear db record
-    //   try {
-    //     const deleteFolder = await dbQuery.deleteFolder(folderId, userId);
-    //     if (Object.keys(deleteFolder).length > 0) {
-    //       return res.status(200).end();
-    //     }
-    //   } catch (error) {
-    //     console.error("Error on deleting folder", error);
-    //   }
-    // } else {
-    //   const addPathToFiles = uploadedFileData.map(
-    //     (file) => `${folderPath}/${file.name}`
-    //   );
-    //   const { data, error } = await supabase.storage
-    //     .from("file-uploads")
-    //     .remove(addPathToFiles);
-    //   if (error) {
-    //     console.error("Error when deleting files in folder supabase", error);
-    //   } else {
-    //     // clear db record
-    //     try {
-    //       const deleteFolder = await dbQuery.deleteFolder(folderId, userId);
-    //       if (Object.keys(deleteFolder).length > 0) {
-    //         return res.status(200).end();
-    //       }
-    //     } catch (error) {
-    //       console.error("Error on deleting folder", error);
-    //     }
-    //   }
-    // }
+    if (error) {
+      isFileDeleted = false;
+      console.error("Error on deleting files inside folder:", error);
+      return res.status(500).end();
+    }
+  }
+
+  // get all nested folders inside the folder
+  const allNestedFolders = await dbQuery.getAllChildFolders(folderId, userId);
+
+  for (const folder of allNestedFolders) {
+    // get files inside each folder
+
+    const files = await dbQuery.findFilesByParentId(userId, folder.id);
+
+    let filePaths = [];
+    for (const file of files) {
+      filePaths = filePaths.concat(file.path);
+    }
+
+    // delete files from supabase
+    if (filePaths.length > 0) {
+      const { data, error } = await supabase.storage
+        .from("file-uploads")
+        .remove(filePaths);
+
+      if (error) {
+        isFileDeleted = false;
+        console.error("Error on deleting files inside folder:", error);
+        return res.status(500).end();
+      }
+    }
+  }
+
+  // if both ok delete folder from db
+  if (isFileDeleted) {
+    const deletedFolder = await dbQuery.deleteFolder(folderId, userId);
+    return res.status(200).end();
   }
 };
 const libraryEditFolderPatch = async (req, res) => {
