@@ -331,47 +331,29 @@ const libraryAddFilePost = (req, res, next) => {
       }
     } else {
       // when parent folder has id means it has parent folder
-      // find all parent folders
-      const allParents = await dbQuery.getParentFolders(parentFolderId, userId);
-      let parentFolderPath = null;
+      const currentFolder = await dbQuery.findFolderById(
+        userId,
+        parentFolderId
+      );
 
-      if (allParents.length === 0) {
-        const currentFolder = await dbQuery.findFolderById(
-          userId,
-          parentFolderId
-        );
-        parentFolderPath = currentFolder?.name;
+      const parentFolderPath = currentFolder.path;
+      const filePathSupabase = `${parentFolderPath}/${fileName}`;
+      const { data, error } = await supabase.storage
+        .from("file-uploads")
+        .upload(filePathSupabase, fileBase64);
+      if (error) {
+        return res.status(400).json({ error: error.message });
       } else {
-        // current folder name also needed to create full file path
-        const currentFolder = await dbQuery.findFolderById(
-          userId,
-          parentFolderId
+        const fileDestination = data?.path;
+
+        const file = await dbQuery.createFile(
+          fileName,
+          fileSizes,
+          fileDestination,
+          parentFolderId,
+          userId
         );
-        const allFolders = [currentFolder, ...allParents];
-
-        parentFolderPath = allFolders
-          .map((folder) => folder.name)
-          .reverse()
-          .join("/");
-
-        const filePathSupabase = `${parentFolderSupabase}/${parentFolderPath}/${fileName}`;
-        const { data, error } = await supabase.storage
-          .from("file-uploads")
-          .upload(filePathSupabase, fileBase64);
-        if (error) {
-          return res.status(400).json({ error: error.message });
-        } else {
-          const fileDestination = data?.path;
-
-          const file = await dbQuery.createFile(
-            fileName,
-            fileSizes,
-            fileDestination,
-            parentFolderId,
-            userId
-          );
-          return res.status(200).json({ message: "File upload successfully" });
-        }
+        return res.status(200).json({ message: "File upload successfully" });
       }
     }
   });
