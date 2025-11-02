@@ -98,15 +98,6 @@ const libraryAddFolderPost = async (req, res) => {
   const userId = req.user.id;
   const folderName = req.body.folderName;
 
-  async function createFolder(parentFolderId, userId, folderName) {
-    const folder = await dbQuery.createFolder(
-      folderName,
-      userId,
-      parentFolderId
-    );
-    return folder;
-  }
-
   if (!parentFolderId) {
     // parent folder null means root folder
     const folder = await dbQuery.createFolder(

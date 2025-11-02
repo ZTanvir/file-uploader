@@ -54,7 +54,7 @@ const getParentFolders = async (parentFolderId, userId) => {
   }
 
   const parents = await getParentFolders(folder.parentFolder.id);
-
+  
   return [folder.parentFolder, ...parents];
 };
 
