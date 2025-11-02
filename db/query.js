@@ -48,13 +48,14 @@ const getParentFolders = async (parentFolderId, userId) => {
     where: { id: parentFolderId, userId },
     include: { parentFolder: true },
   });
+  console.log("In db query, folder info:", folder);
 
   if (!folder || !folder.parentFolder) {
     return [];
   }
 
   const parents = await getParentFolders(folder.parentFolder.id);
-  
+
   return [folder.parentFolder, ...parents];
 };
 
@@ -86,13 +87,14 @@ const findFolderById = async (userId, folderId) => {
   }
 };
 
-const createFolder = async (folderName, userId, parentFolderId) => {
+const createFolder = async (folderName, userId, parentFolderId, path) => {
   try {
     const folder = await prisma.folder.create({
       data: {
         name: folderName,
         userId,
         parentFolderId,
+        path,
       },
     });
     return folder;
