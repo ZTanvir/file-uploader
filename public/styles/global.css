@@ -196,11 +196,11 @@ body {
   }
 }
 
-@media screen and (min-width: 1440px) {
+@media screen and (min-width: 1024px) {
   main {
     /* folder and file options dialog don't work in 2k display */
-    min-width: 1400px;
-    max-width: 1440px;
+    min-width: 1024px;
+    max-width: 1024px;
     margin: 0 auto;
   }
 }

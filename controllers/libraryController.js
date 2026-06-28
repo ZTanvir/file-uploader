@@ -18,7 +18,7 @@ const libraryRootPageGet = async (req, res, next) => {
   const userId = req.user?.id;
   const folderList = await dbQuery.getFoldersByParentId(
     userId,
-    (parentFolderId = null)
+    (parentFolderId = null),
   );
 
   if (!userId) {
@@ -28,7 +28,7 @@ const libraryRootPageGet = async (req, res, next) => {
 
   const fileList = await dbQuery.findFilesByParentId(
     userId,
-    (parentFolderId = null)
+    (parentFolderId = null),
   );
   // format date in x time ago from now
   dayjs.extend(relativeTime);
@@ -106,7 +106,7 @@ const libraryAddFolderPost = async (req, res) => {
       folderName,
       userId,
       parentFolderId,
-      folderPath
+      folderPath,
     );
     if (folder?.id) {
       return res.status(200).end();
@@ -120,7 +120,7 @@ const libraryAddFolderPost = async (req, res) => {
       folderName,
       userId,
       parentFolderId,
-      path
+      path,
     );
 
     if (folder?.id) {
@@ -196,11 +196,11 @@ const libraryEditFolderPatch = async (req, res) => {
     userId,
     folderId,
     newFolderName,
-    updatedPath
+    updatedPath,
   );
   const filesInFolder = await dbQuery.findFilesByParentId(
     userId,
-    editedFolder.id
+    editedFolder.id,
   );
 
   for (const file of filesInFolder) {
@@ -210,7 +210,7 @@ const libraryEditFolderPatch = async (req, res) => {
       file.id,
       userId,
       file.name,
-      newPath
+      newPath,
     );
 
     const { data, error } = await supabase.storage
@@ -230,7 +230,7 @@ const libraryEditFolderPatch = async (req, res) => {
   for (const folder of allNestedFolders) {
     const parentFolder = await dbQuery.getParentFolder(
       folder.parentFolderId,
-      userId
+      userId,
     );
     const parentFolderPath = parentFolder.path;
     const newPath = `${parentFolderPath}/${folder.name}`;
@@ -239,12 +239,12 @@ const libraryEditFolderPatch = async (req, res) => {
       userId,
       folder.id,
       folder.name,
-      newPath
+      newPath,
     );
   }
   const updatedNestedFolders = await dbQuery.getAllChildFolders(
     folderId,
-    userId
+    userId,
   );
 
   // get child file of each child folder
@@ -257,7 +257,7 @@ const libraryEditFolderPatch = async (req, res) => {
         file.id,
         userId,
         file.name,
-        newPath
+        newPath,
       );
 
       const { data, error } = await supabase.storage
@@ -324,7 +324,7 @@ const libraryEditFilePatch = async (req, res) => {
         fileId,
         userId,
         newFileName,
-        updatedPath
+        updatedPath,
       );
       if (Object.keys(updateFile).length > 0) {
         return res.status(200).end();
@@ -347,7 +347,7 @@ const libraryDownloadFileGet = async (req, res) => {
   if (error) {
     console.error(
       "Error while getting download url from supabase for this file.",
-      error
+      error,
     );
   } else {
     return res.status(200).redirect(data.publicUrl);
@@ -399,7 +399,7 @@ const libraryAddFilePost = (req, res, next) => {
           fileSizes,
           fileDestination,
           parentFolderId,
-          userId
+          userId,
         );
 
         return res.status(200).json({ message: "File upload successfully" });
@@ -408,7 +408,7 @@ const libraryAddFilePost = (req, res, next) => {
       // when parent folder has id means it has parent folder
       const currentFolder = await dbQuery.findFolderById(
         userId,
-        parentFolderId
+        parentFolderId,
       );
 
       const parentFolderPath = currentFolder.path;
@@ -426,7 +426,7 @@ const libraryAddFilePost = (req, res, next) => {
           fileSizes,
           fileDestination,
           parentFolderId,
-          userId
+          userId,
         );
         return res.status(200).json({ message: "File upload successfully" });
       }
